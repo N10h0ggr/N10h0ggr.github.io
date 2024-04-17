@@ -10,9 +10,14 @@ tags:
 toc: "true"
 ---
 
-**References**: [https://attl4s.github.io/](https://attl4s.github.io/)
 
-The goal of this blog post is to understand how Kerberos works and, most importantly, why it works the way it does. Kerberos is the primary authentication protocol in Active Directory, essential for securing Windows-based networks.
+
+The goal of this post is to understand how Kerberos works and, most importantly, why it works the way it does. Kerberos is the primary authentication protocol in Active Directory, essential for securing Windows-based networks.
+
+This post are the notes taken from the @attl4s presentation in Navaja Negra conference in 2019.
+Here are the [Presentation](https://attl4s.github.io/assets/pdf/You_do_(not)_Understand_Kerberos.pdf) and [Recording](https://youtu.be/4LDpb1R3Ghg) for this theme. Check his RRSS out, he has really great talks about all the Windows environment.
+
+All that said, lets dig in. 
 
 # Protocol History
 
