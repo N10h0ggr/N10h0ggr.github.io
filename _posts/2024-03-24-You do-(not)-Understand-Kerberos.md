@@ -12,19 +12,15 @@ toc: "true"
 
 **References**: [https://attl4s.github.io/](https://attl4s.github.io/)
 
-The goal is to understand how Kerberos works and, most importantly, why it works the way it does. Kerberos is the primary authentication protocol in Active Directory.
-
-|**Remark**|
-|---|
-|Throughout these notes, I mention several times that the symmetric key used by Kerberos is the user's password. This is not exactly the case. Obviously, Kerberos does not use the user's password because the key size is very inconsistent and restrictive for symmetric key schemes, so the keys used by Kerberos **are derived** from the user's password, but they are not the same at any point.|
+The goal of this blog post is to understand how Kerberos works and, most importantly, why it works the way it does. Kerberos is the primary authentication protocol in Active Directory, essential for securing Windows-based networks.
 
 # Protocol History
 
 **Kerberos**, originating from the _Athena Project_ at MIT, emerged with the mission of simplifying computer access for students systematically. The vision was to enable **Single Sign-On (SSO)**, allowing users to authenticate once and maintain access for a specified period, typically eight hours. This system aimed to provide seamless access to network shares and DNS. Kerberos was born as a crucial component of this SSO approach.
 
-|**Important**|
-|---|
-|**Kerberos** primarily functions as an **authentication** protocol, **NOT** as an **authorization** mechanism. Essentially, it provides users with a digital identity, similar to a national identification card (DNI), but it does not grant inherent access to all resources.|
+> ##### **Important**
+> 
+> **Kerberos** primarily functions as an **authentication** protocol, **NOT** as an **authorization** mechanism. Essentially, it provides users with a digital identity, similar to a identification card, but it does not grant inherent access to all resources.
 
 Initially released in 1989, **Kerberos** used DES encryption. Over time, it evolved into **Kerberos v5**, which received a significant update in 2005. This version introduced several improvements, including the **Generic Security Services Application Programming Interface (GSS-API)**, support for cross-domain authentication, protocol extension capabilities, additional encryption options, and the adoption of **ASN.1**.
 
@@ -34,33 +30,36 @@ The significance of **Kerberos** was further highlighted when **Microsoft** show
 
 **Reference**: [Kerberos Dialogue](https://web.mit.edu/kerberos/dialogue.html)
 
-The problem being addressed was that, at that time, the same computer was being used by many people. It was suggested to have as many computers as students so they wouldn't have to share; additionally, they would connect among themselves.
+Originating from the groundbreaking _Athena Project_ at MIT, Kerberos emerged with a clear mission in mind: to streamline computer access for students systematically. The problem being addressed was the shared use of computers among many people, prompting the need for a solution that would enable secure authentication without the complexity of separate password databases for each service.
 
-At one point in the Kerberos dialogue, Euripides hints to Athena that the idea is great, but without authentication, he could impersonate her, delete her files, and do malicious things in her name, since nobody would have any way of knowing who was performing those actions. Hence the need for authentication arose.
+So the idea of a central authentication server came up. At its core, Kerberos functioned as a pivotal element of the Single Sign-On (SSO) paradigm, seamlessly facilitating access to network shares and DNS services.
 
-Initially, the idea was to request usernames and passwords that each service would validate separately. To use each service, you would have to enter the password, which means that each of those servers hosting a service would need its own password database. This is very costly and very difficult to maintain.
+Okay, but how does a person like Charles, for example, use a mail service? Somehow, he has to let the mail service know that he has authenticated correctly against Kerberos...
 
-So the idea of a central authentication server came up. Anyone, service, agent, workstation... would have to identify themselves to the Kerberos server using credentials.
+Then a concept called the **Service Ticket** or **ST** appeared. It works with a symmetric key scheme, and it works as follows:
 
-Okay, but how does a person like Charles, for example, use a mail service? Somehow, he has to let the mail service know that he has authenticated correctly against Kerberos, and likewise, Charles must know that the mail server he is connecting to has authenticated correctly and is who it claims to be.
+> **Note**
+> This first approach does not take into account the Key Exchange mechanism; It is assumed the symmetric session key is passed from the user through a secure channel to the Kerberos server. 
 
-Then a concept called the **Service Ticket** or **ST** appeared. It works with a symmetric key scheme as follows:
+1. Charles sends a ticket with a timestamp encrypted with his symmetric session key (derived from his password) and his username to the Kerberos server.
+2. The Kerberos server tries to decrypt the timestamp with the username' symmetric key. If successful, the server sends a **Service Ticket** back to Charles. This ticket contains his **identity**: Name, groups, attributes, etc. This identity is encrypted with the secret key of the service we want to access, in this case, the mail service. 
 
-1. Charles sends a ticket encrypted with his symmetric key (his password) to the Kerberos server. This ticket contains a Timestamp.
-2. The Kerberos server tries to decrypt it with Charles' symmetric key. If successful, the server sends a **Service Ticket** back to Charles. This ticket contains his identity: Name, groups, attributes, etc. And it is encrypted with the unique key of the service we want to access, in this case, the mail service. Note that Charles cannot decrypt the ticket because he does not have the key to the mail service; only the Kerberos server and that particular service have that key.
+> **Note**
+> Charles cannot decrypt the ticket because he does not have the key to the mail service; only the Kerberos server and that particular service have the secret key.
+
 3. Charles then sends this ticket to the service, and if it can decrypt it, it will read our identity and grant us access to our mail.
 
-This is cool, but then Charles would have to enter the password every time he wants to access a service. If he wants to check his email again, he will have to enter the password again, and if he wants to access a different service, too. To solve this, **Ticket-Granting Tickets** or **TGTs** were born.
+This is cool, but it is not how Kerberos actually works. With this approach Charles would have to enter the password every time he wants to access a service, therefore SSO is not implemented. If he wishes to check his email again or access a different service, he'll need to re-enter the password each time. To solve this, **Ticket-Granting Tickets** (**TGTs**) were born.
 
-So far, what we've seen is called the "Authentication Service" or **AS**. The part that incorporates the **TGT** is called the "Ticket Granting Service" or **TGS**. Together they work as follows:
+So far, what we've seen is the Kerberos component called "**Authentication Service**" or **AS**. TGT is managed by another different part: the "**Ticket Granting Service**" or **TGS**. Together they work as follows:
 
-1. Charles sends his envelope with the **Timestamp** encrypted with his symmetric key to the **AS** of the Kerberos server.
-2. If the server can decrypt this envelope, it sends Charles a **Ticket-Granting Ticket** or **TGT**, which contains Charles' identity, but this time it is encrypted with the symmetric key of the **TGS** service of the Kerberos server.
-3. Now when Charles wants to access any service (for example, the mail service) he only has to send this **TGT** (along with the data of the service he wants to access) to the **TGS** service of the Kerberos server. Since nothing needs to be re-encrypted, no credentials need to be requested again!
-4. The **TGS**, upon receiving this **TGT**, will try to decrypt it. Upon successful decryption, it will read Charles' identity and the service he wants to access. Once validated, it will give us a **Service Ticket** or **ST** with our identity and encrypted with the symmetric key of the service we want to access.
-5. Charles can use this ticket to access the service he indicated earlier with his identity.
+1. Charles sends his ticket with the **Timestamp** encrypted with the symmetric session key and its credentials to the **AS**.
+2. If the server can decrypt the timestamp, it sends Charles a **TGT**, which contains Charles' identity, but this time encrypted with the secret key of the **TGS**.
+3. Now when Charles wants to access any service (for example, the mail service) he only has to send this **TGT** (along with the data of the service he wants to access) to the **TGS** service of the Kerberos server. Since no additional encryption is necessary, there's no need to request credentials again!
+4. The **TGS**, upon receiving this **TGT**, will try to decrypt it. Upon successful decryption, it will read Charles' identity and the service he wants to access. Then, It will send back a **Service Ticket** (**ST**) with Charles' identity and encrypted with the secret key of the service he wants to access.
+5. Now Charles can access to access the service he indicated earlier with this **ST**.
 
-In summary, **TGTs** serve to implement **SSO**, obtaining **Service Tickets** or **STs** without needing to know the password.
+In summary, **TGTs** serve to implement **SSO**, obtaining **Service Tickets** without needing to provide the password each time.
 
 ## Tickets
 
@@ -228,6 +227,7 @@ Additionally, we know that a ticket (whether it's the TGT or an ST) is always en
 | Note                                                                                                                                                                                                                            |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | There's a catch in all of this, and it's that the TGS service key is usually managed by the AD and tends to be an uncrackable key. That said, some admin might change the krbtgt user's password and set it to an insecure one. |
+
 The goal of Kerberoasting is to obtain STs and use them to crack the passwords of a service user.
 
 Some services offer server or workstation accounts. The credentials for these accounts are managed by the AD itself and therefore tend to be long and random passwords (plus they are rotated). On the other hand, there are some services that need you to create a service account with a registered SPN for them. Therefore, these accounts are managed by people and may have insecure passwords.
