@@ -1,0 +1,186 @@
+{
+  "main": {
+    "id": "d7eeb567ce2f9716",
+    "type": "split",
+    "children": [
+      {
+        "id": "679020e68dc44b4b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a067cd8d6d36c3ab",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_posts/2024-03-23-Entendiendo-Kerberos.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "880bb28cf4612c3f",
+    "type": "split",
+    "children": [
+      {
+        "id": "c1417f6882a5d4dd",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3c439f53221f6502",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "be57d49c2855fffe",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "4f6c27e2e17c146d",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "afd4fee96ac7e9a6",
+    "type": "split",
+    "children": [
+      {
+        "id": "3018d493ae1f9a46",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "89420872a330432b",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "_posts/2024-03-23-Entendiendo-Kerberos.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "b34e8ab7cf16ca5d",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "_posts/2024-03-23-Entendiendo-Kerberos.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "c7c01120523d2f97",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "d4545fe384f2cc46",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "_posts/2024-03-23-Entendiendo-Kerberos.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "a067cd8d6d36c3ab",
+  "lastOpenFiles": [
+    "_posts/2024-03-30-Movimientos-Laterales-en-Windows.md",
+    "_posts/2024-03-23-Entendiendo-Kerberos.md",
+    "_posts/2024-02-25-Introduction-to-the-Windows-API.md",
+    "_site/categories/basics/index.html",
+    "_site/categories/basics",
+    "_posts/2024-03-24-You do-(not)-Understand-Kerberos.md",
+    "_posts/2024-03-31-Windows-Lateral-Movements.md",
+    "_posts/2024-03-03-Payload-Unleashed-APC-Injection.md",
+    "_posts/2024-03-17-Payload-Unleashed-DLL-Injection.md",
+    "_site/posts/You-do-(not)-Understand-Kerberos/index.html",
+    "_site/posts/You-do-(not)-Understand-Kerberos",
+    "_site/posts/Windows-Lateral-Movements/index.html",
+    "_site/posts/Windows-Lateral-Movements",
+    "_site/posts/Movimientos-Laterales-en-Windows/index.html",
+    "_site/posts/Movimientos-Laterales-en-Windows",
+    "_site/posts/Entendiendo-Kerberos/index.html",
+    "_site/posts/Entendiendo-Kerberos",
+    "_posts/2024-03-02-Payload-Unleashed-Shellcode-Injection.md",
+    "_posts/2024-02-24-Unraveling-the-Malware-Mysteries.md",
+    "assets/img/favicons/favicon-32x32.png",
+    "_site/assets/img/avatar/dragon.png",
+    "assets/img/avatar/dragon.png",
+    "assets/img/favicons/favicon-16x16.png",
+    "assets/img/favicons/apple-touch-icon.png",
+    "assets/img/favicons/mstile-150x150.png",
+    "assets/img/favicons/android-chrome-512x512.png",
+    "assets/img/favicons/android-chrome-192x192.png",
+    "assets/img/favicons/safari-pinned-tab.svg",
+    "README.md",
+    "_site/assets/img/favicons/safari-pinned-tab.svg",
+    "_tabs/about.md",
+    "_tabs/tags.md",
+    "_tabs/archives.md",
+    "_site/about.md"
+  ]
+}

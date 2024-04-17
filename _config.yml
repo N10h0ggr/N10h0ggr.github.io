@@ -9,40 +9,43 @@ theme: jekyll-theme-chirpy
 lang: en
 
 # Change to your timezone › https://kevinnovak.github.io/Time-Zone-Picker
-timezone:
+timezone: Europe/Madrid
 
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Chirpy # the main title
+title: N10h0ggr # the main title
 
-tagline: A text-focused Jekyll theme # it will display as the sub-title
+tagline: An offensive security blog focused on Red Teaming and malware dev. # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
-  A minimal, responsive and feature-rich Jekyll theme for technical writing.
+    An offensive security blog focused on Red Teaming and malware dev.
 
 # Fill in the protocol & hostname for your site.
 # e.g. 'https://username.github.io', note that it does not end with a '/'.
-url: ""
+url: "https://N10h0ggr.github.io"
 
 github:
-  username: github_username # change to your github username
+  username: N10h0ggr # change to your github username
 
 twitter:
-  username: twitter_username # change to your twitter username
+  username: NoelCarrasco16 # change to your twitter username
+  
+linkedin:
+  username: noel-carrasco # change to your twitter username
 
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
-  name: your_full_name
-  email: example@domain.com # change to your email address
+  name: Noel Carrasco
+  email: noel.carrascoit@gmail.com # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://twitter.com/username # change to your twitter homepage
-    - https://github.com/username # change to your github homepage
+    - https://twitter.com/NoelCarrasco16 # change to your twitter homepage
+    - https://github.com/N10h0ggr # change to your github homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
-    # - https://www.linkedin.com/in/username
+    - https://www.linkedin.com/in/noel-carrasco/
 
 google_site_verification: # fill in to your verification string
 
@@ -76,7 +79,7 @@ theme_mode: # [light | dark]
 img_cdn:
 
 # the avatar on sidebar, support local or CORS resources
-avatar:
+avatar: ./assets/img/avatar/dragon.png
 
 # The URL of the site-wide social preview image used in SEO `og:image` meta tag.
 # It can be overridden by a customized `page.image` in front matter.
@@ -122,7 +125,7 @@ pwa:
     # shares the same domain name as the current website.
     deny_paths:
       # - "/example"  # URLs match `<SITE_URL>/example/*` will not be cached by the PWA
-
+ 
 paginate: 10
 
 # The base URL of your site
