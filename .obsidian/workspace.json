@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2024-03-23-Entendiendo-Kerberos.md",
+                "file": "_posts/2024-02-24-Unraveling-the-Malware-Mysteries.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/2024-03-23-Entendiendo-Kerberos.md",
+                "file": "_posts/2024-02-24-Unraveling-the-Malware-Mysteries.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/2024-03-23-Entendiendo-Kerberos.md",
+                "file": "_posts/2024-02-24-Unraveling-the-Malware-Mysteries.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/2024-03-23-Entendiendo-Kerberos.md"
+                "file": "_posts/2024-02-24-Unraveling-the-Malware-Mysteries.md"
               }
             }
           }
@@ -148,8 +148,8 @@
   },
   "active": "a067cd8d6d36c3ab",
   "lastOpenFiles": [
-    "_posts/2024-03-30-Movimientos-Laterales-en-Windows.md",
     "_posts/2024-03-23-Entendiendo-Kerberos.md",
+    "_posts/2024-03-30-Movimientos-Laterales-en-Windows.md",
     "_posts/2024-02-25-Introduction-to-the-Windows-API.md",
     "_site/categories/basics/index.html",
     "_site/categories/basics",
