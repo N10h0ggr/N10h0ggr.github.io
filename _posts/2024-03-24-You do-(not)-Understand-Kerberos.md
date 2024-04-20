@@ -10,8 +10,6 @@ tags:
 toc: "true"
 ---
 
-
-
 The goal of this post is to understand how Kerberos works and, most importantly, why it works the way it does. Kerberos is the primary authentication protocol in Active Directory, essential for securing Windows-based networks.
 
 This post are the notes taken from the @attl4s presentation in Navaja Negra conference in 2019.
