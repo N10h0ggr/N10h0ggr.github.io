@@ -141,9 +141,9 @@ The vast majority of C2 frameworks have their own implementation of runas throug
 
 This executable creates an access token similar to the one created with an interactive logon, meaning that it stores the credentials in memory to implement SSO.
 
-## What if I have a HASH?
+### What if I have a HASH?
 
-### Pass the hash in Windows
+#### Pass the hash in Windows
 
 The steps are almost the same as those used by runas:
 
@@ -154,27 +154,34 @@ The steps are almost the same as those used by runas:
 
 It's like runas /netonly but with the hash instead of the password.
 
-In a normal procedure, a user would provide their credentials, and LSASS would create the NTLM hash to guarantee access to the host. By using Pass the Hash, you inject that hash directly into LSASS.
+In a normal procedure, a user would provide their credentials, and **LSASS** would create the **NTLM hash** to guarantee access to the host. By using Pass the Hash, you inject that hash directly into LSASS.
 
-Note: mimikatz implements both pass the hash and over-pass the hash: once the NTLM hash is written into LSASS, it takes advantage of it for Windows to request TGS tickets.
+> **Note**
+> 
+> **Mimikatz** implements both **pass the hash** and **over-pass the hash**: once the NTLM hash is written into LSASS, it takes advantage of it for Windows to request TGS tickets.
 
 ### Pass the ticket
 
-It's the same as pass the hash but with TGT tickets. The Kerberos library allows us to import tickets without needing to be administrators.
+It operates similarly to pass the hash, but with **TGT** (Ticket Granting Ticket) tickets.
+The Kerberos library facilitates this attack by enabling ticket importation without requiring administrative privileges, making it more accessible to attackers.
 
-Important: these types of attacks can be identified if logon sessions containing tokens or tickets that do not belong to the same owner as that logon session are found.
+**Detection** of such attacks involves monitoring logon sessions for anomalies, such as the **presence of tokens** or **tickets belonging to different owners than the respective logon session.** This may indicate unauthorized access attempts and prompt further investigation and mitigation measures to prevent potential data breaches or system compromises."
 
 #### ASK-TGT/TGS
 
+Stands for "Ask for Ticket Granting Ticket/Ticket Granting Service." It refers to a step in the Kerberos authentication protocol where a client requests a Ticket Granting Ticket (TGT) from the Authentication Server (AS) in order to access the Ticket Granting Service (TGS).
+
 It generates legitimate Kerberos traffic without the need for Windows to intervene, so it doesn't require being an administrator.
 
-## What about tokens?
+### What about tokens?
 
-In the end, all the previous steps are necessary if we don't already have a token that interests us. A process that may interest us can be any process with an interactive session of a domain administrator. Remember that for the token to have credentials in memory, it must be associated with an interactive logon session.
+In the end, all the previous steps are necessary if we don't already have a token that interests us. A process that may interest us can be any process with an interactive session. Remember that for the token to have credentials in memory, it must be associated with an interactive logon session.
 
-Manipulating tokens actions require local administrator permissions.
+> **Note**
+> 
+> Manipulating tokens actions require local administrator permissions.
 
-### Token impersonation/theft
+#### Token impersonation/theft
 
 Basically, it consists of duplicating a token (that interests us) referring to a logon session with credentials. Then we assign this token to a new process or to a thread of a process that interests us. This can be achieved through the Win32 API.
 

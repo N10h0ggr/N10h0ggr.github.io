@@ -31,15 +31,15 @@ In this blog post we will cover the **Remote Thread Injection**.
 
 Before delving into the code snippet, let's understand the purpose of each function used in the shellcode injection process and its significance within the attack:
 
-1.   **Opening the Target Process**: Use [`OpenProcess`](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocess) to open a handle to the target process identified by its process ID.
+1. **Opening the Target Process**: Use [`OpenProcess`](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocess) to open a handle to the target process identified by its process ID.
     
-2.   **Memory Allocation**: Use [`VirtualAllocEx`](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualallocex) to allocate memory within the address space of the target process.
+2. **Memory Allocation**: Use [`VirtualAllocEx`](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualallocex) to allocate memory within the address space of the target process.
     
-3.   **Shellcode Injection**: Use [`WriteProcessMemory`](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-writeprocessmemory) to write the shellcode to the allocated memory within the target process.
+3. **Shellcode Injection**: Use [`WriteProcessMemory`](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-writeprocessmemory) to write the shellcode to the allocated memory within the target process.
     
-4.   **Remote Thread Creation**: Use [`CreateRemoteThread`](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createremotethread) to create a remote thread in the target process, specifying the entry point as the allocated memory containing the shellcode.
+4. **Remote Thread Creation**: Use [`CreateRemoteThread`](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createremotethread) to create a remote thread in the target process, specifying the entry point as the allocated memory containing the shellcode.
     
-5.   **Cleanup**: Close handles and release allocated memory after the execution of the remote thread.
+5. **Cleanup**: Close handles and release allocated memory after the execution of the remote thread.
 
 
 ```C
