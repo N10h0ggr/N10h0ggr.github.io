@@ -104,7 +104,7 @@ It's crucial to ensure that the length of the payload argument written to `PEB->
 
 ### Step 1: Create Target Process in Suspended State
 
-To create a process in a suspended state we will use the [CreateProcessW()](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw) function with the [CREATE_SUSPENDED | CREATE_NO_WINDOW](https://learn.microsoft.com/en-us/windows/win32/procthread/process-creation-flags) flag. 
+To create a process in a suspended state we will use the [CreateProcessW()](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw) function with the `CREATE_SUSPENDED | CREATE_NO_WINDOW` [flag](https://learn.microsoft.com/en-us/windows/win32/procthread/process-creation-flags). 
 
 ```c
 CreateProcessW(
