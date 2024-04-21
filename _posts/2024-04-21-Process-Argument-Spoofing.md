@@ -31,7 +31,7 @@ typedef struct _PEB {
 ```
 Within the **PEB**, there is a structure called **RTL_USER_PROCESS_PARAMETERS**, which further holds information specific to the **user-mode** part of the process. This structure includes the **CommandLine** member, which stores the command line arguments passed to the process when it was started.
 
-``` C
+``` c
 typedef struct _RTL_USER_PROCESS_PARAMETERS {
     ULONG MaximumLength;                // The maximum length of this structure
     ULONG Length;                       // The actual length of this structure
@@ -136,7 +136,7 @@ typedef struct _PROCESS_BASIC_INFORMATION {
 ```
 It's important to note that `NtQueryInformationProcess` is a system call, and thus it needs to be invoked using `GetModuleHandle` and `GetProcAddress`. Here is an example: 
 
-```C
+```c
 // Load the NtQueryInformationProcess function dynamically
     HMODULE hNtDll = GetModuleHandle("ntdll.dll");
     if (hNtDll == NULL) {
@@ -165,7 +165,8 @@ It's important to note that `NtQueryInformationProcess` is a system call, and th
 ### Steps 3 and 4: Read Remote PEB Structure and ProcessParameters
 
 After retrieving the PEB address for the remote process, you can read the PEB structure using the `ReadProcessMemory` WinAPI function. 
-```C
+
+```c
 BOOL ReadProcessMemory(
   HANDLE  hProcess,                // Handle to the process from which to read the memory
   LPCVOID lpBaseAddress,           // Address in the specified process from which to read
@@ -239,7 +240,8 @@ The `nSize` parameter is the size of the buffer to write in _bytes_. It should b
 ### Step 6: Resume the process
 
 This involves cleaning up the allocated memory, resuming the process thread, and validating the output parameters. If all output parameters are valid, the function returns TRUE; otherwise, it returns FALSE.
-```C
+
+```c
 // Cleaning up allocated memory for PEB and RTL_USER_PROCESS_PARAMETERS structures
 HeapFree(GetProcessHeap(), NULL, pPeb);
 HeapFree(GetProcessHeap(), NULL, pParms);
