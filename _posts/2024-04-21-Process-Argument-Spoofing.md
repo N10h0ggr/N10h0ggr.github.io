@@ -263,6 +263,29 @@ if (*dwProcessId != NULL && *hProcess != NULL && *hThread != NULL) {
 // If any of the output parameters are NULL, return FALSE
 return FALSE;
 ```
+## A little twist
+
+While Procmon was successfully tricked into logging dummy command line arguments, this approach faces limitations when applied to tools like Process Hacker and other tools such as [Process Explorer](https://learn.microsoft.com/en-us/sysinternals/downloads/process-explorer). Unlike Procmon, Process Hacker utilizes `NtQueryInformationProcess` to retrieve process command line arguments at runtime, thereby exposing the manipulation of `PEB->ProcessParameters.CommandLine.Buffer`.
+
+### Solution
+
+Tools like Process Hacker and Process Explorer adhere strictly to the length specified by `CommandLine.Length` when reading `CommandLine.Buffer`, as Microsoft states in [their documentation](https://learn.microsoft.com/en-us/windows/win32/api/subauth/ns-subauth-unicode_string) that `UNICODE_STRING.Buffer` might not be null-terminated. This means they do not rely on null-termination of `UNICODE_STRING.Buffer`, ensuring they only retrieve the necessary bytes from the buffer.
+
+In short, these tools limit the number of bytes read from `CommandLine.Buffer` to be equal to `CommandLine.Length` in order to prevent reading additional unnecessary bytes in the event that `CommandLine.Buffer` is not null-terminated.
+
+To fix this, it's necessary to control the exposure of the payload within `CommandLine.Buffer`. This can be achieved by adjusting the value of `CommandLine.Length` to limit the number of bytes accessible. By patching `CommandLine.Length` in the remote process, one can dictate the size of the buffer that can be read.
+
+### Patching
+
+The following code snippet patches `PEB->ProcessParameters.CommandLine.Length` to limit what Process Hacker can read from `CommandLine.Buffer` only to `powershell.exe`. 
+
+```c
+DWORD dwNewLen = sizeof(L"powershell.exe");
+
+if (!WriteToTargetProcess(Pi.hProcess, ((PBYTE)pPeb->ProcessParameters + offsetof(RTL_USER_PROCESS_PARAMETERS, CommandLine.Length)), (PVOID)&dwNewLen, sizeof(DWORD))){
+  return FALSE;
+}
+```
 
 ## Conslusion
 
