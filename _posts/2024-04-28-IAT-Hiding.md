@@ -231,15 +231,13 @@ int main() {
     WORD* pAddressOfNameOrdinals = (WORD*)(dwBaseAddress + pExportDirectory->AddressOfNameOrdinals);
     DWORD numberOfFunctions = pExportDirectory->NumberOfFunctions;
 
-    // Print the exported function names
-    printf("Exported Functions:\n");
-    for (DWORD i = 0; i < numberOfFunctions; i++) {
-        printf("%s\n", (char*)(dwBaseAddress + pAddressOfNames[i]));
-    }
+	for (DWORD i = 0; i < numberOfFunctions; i++){ 	
+		CHAR* pFunctionName	= (CHAR*)(hModule + pAddressOfNames[i]); 	
+		WORD wFunctionOrdinal = pAddressOfNameOrdinals[i]; 	
+		printf("[ %0.4d ] NAME: %s -\t ORDINAL: %d\n", i, pFunctionName, wFunctionOrdinal); }
 
     // Free the loaded DLL
     FreeLibrary(hModule);
-
     return 0;
 }
 ```
