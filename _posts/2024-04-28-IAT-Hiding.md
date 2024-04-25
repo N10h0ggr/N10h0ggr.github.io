@@ -1,6 +1,6 @@
 ---
-title: Process Argument Spoofing
-date: 2024-04-21
+title: IAT Hiding & Obfuscation 
+date: 2024-04-25
 categories:
   - malware
   - hiding
@@ -180,7 +180,7 @@ for (DWORD i = 0; i < numberOfFunctions; i++){
 }
 ```
 
-## Full code
+### Full code
 
 ```c
 #include <windows.h>
