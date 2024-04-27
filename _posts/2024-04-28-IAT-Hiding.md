@@ -241,3 +241,90 @@ int main() {
     return 0;
 }
 ```
+
+## Creating GetModuleHandle
+
+The [GetModuleHandle](https://docs.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulehandlea) function retrieves a handle to the specified module if it's already loaded into the address space of the calling process. A module handle is a unique identifier that represents a loaded module (typically a DLL or an executable file). This function is commonly used to obtain a handle to the module of the current process or to find the handle of another loaded module by specifying its module name.The function returns a handle to the DLL (`HMODULE`) or `NULL` if the DLL does not exist in the calling process.
+
+`HMODULE` is a handle to a module, typically a DLL or an executable file. It's a pointer to the base address of the module when it is loaded into memory. In Win32 programming, `HMODULE` is defined as a pointer to a `HINSTANCE__` structure. It's important to note that `HMODULE` and `HINSTANCE` are essentially the same data type; they are interchangeable and can be used interchangeably in most situations.
+
+Our goal is to create a function to retrieve the base address of a specified DLL. For this purpose we are gonna use the **Process Environment Block (PEB)**, which contains information regarding the loaded DLLs. 
+
+### The Process Environment Block (PEB)
+
+The Process Environment Block (PEB) is a data structure in Windows operating systems that holds various pieces of information about a running process. The PEB comes from the Thread Environment Block (TEB) data structure, which stores stores thread-specific information. 
+
+Having the PEB within the TEB allows a thread to access information about the process it belongs to, such as loaded modules, process parameters, and environment variables. The TEB serves as a bridge between the per-thread context and the process-wide context provided by the PEB.
+
+> **Note** 
+> In x64 systems, an offset to the TEB pointer is stored in the GS (Global Segment) register; a special-purpose register in x86 and x86-64 architectures. By storing the offset to the TEB in the GS register, the operating system can efficiently access thread-specific data without needing to perform additional memory lookups. This register is used to optimize access to thread-specific data in 64-bit operating systems.
+
+
+The PEB structure is defined as follows:
+
+```c
+typedef struct _PEB {
+  BYTE                          Reserved1[2];
+  BYTE                          BeingDebugged;
+  BYTE                          Reserved2[1];
+  PVOID                         Reserved3[2];
+  PPEB_LDR_DATA                 Ldr;
+  PRTL_USER_PROCESS_PARAMETERS  ProcessParameters;
+  PVOID                         Reserved4[3];
+  PVOID                         AtlThunkSListPtr;
+  PVOID                         Reserved5;
+  ULONG                         Reserved6;
+  PVOID                         Reserved7;
+  ULONG                         Reserved8;
+  ULONG                         AtlThunkSListPtr32;
+  PVOID                         Reserved9[45];
+  BYTE                          Reserved10[96];
+  PPS_POST_PROCESS_INIT_ROUTINE PostProcessInitRoutine;
+  BYTE                          Reserved11[128];
+  PVOID                         Reserved12[1];
+  ULONG                         SessionId;
+} PEB, *PPEB;
+```
+
+The most important member of the PEB structure is the `Ldr` variable of type `PEB_LDR_DATA`. The `Ldr` member provides information about the modules currently loaded into the process's address space, such as DLLs and their dependencies. Additionally, it may contain details about module initialization and deinitialization routines. Therefore, our first step is to retrieve the PEB structure. 
+
+> **Note**
+> The "TIB" (Thread Information Block) and "TEB" (Thread Environment Block) are slightly the same but with some differences:
+
+|                           | TIB (Thread Information Block)                 | TEB (Thread Environment Block)                        |
+| ------------------------- | ---------------------------------------------- | ----------------------------------------------------- |
+| Architecture              | x86 (32-bit)                                   | x86-64 (64-bit)                                       |
+| Access Method             | Accessed through FS segment register           | Accessed through GS segment register                  |
+| Contains                  | Thread-specific information                    | More detailed thread-specific information             |
+
+Mainly there are two different approaches to retrieve the PEB pointer: one is using the `__readgsqword` macro from Vistual Studio (VS) and the other is implement it in assembly. As depending on the architecture the TEB pointer may be in the FS register or the GS register, is better to rely in the VS macro. 
+
+> **Note**
+> All information sources I found said that to access to the PTEB structure you had to retrieve a quadword from the offset `0x30` in the GS or doubleword from `0x18` offset in the FS for 32-bit. 
+> The same happens for the PPEB at offsets `0x60` and `0x30` respectively 
+> 
+> Why those offsets? As where I could investigate, that offset comes from the design decisions made by Microsoft when defining the layout of thread-specific information within the GS segment.
+
+Therefore are two possibilities:
+
+1. Access the PTEB and the access to the PPEB:
+```c
+# For 64 bit
+PTEB pTeb = (PTEB)__readgsqword(0x30);
+PPEB pPeb = (PPEB)pTeb->ProcessEnvironmentBlock;
+
+# For 32 bit
+PTEB pTeb = (PTEB)__readgsqword(0x18);
+PPEB pPeb = (PPEB)pTeb->ProcessEnvironmentBlock;
+```
+
+2. Access directly to the PPEB:
+```c 
+# For 64 bit
+PPEB pPeb = (PPEB)__readgsqword(0x60); 
+
+# For 32 bit
+PPEB pPeb = (PPEB)__readgsqword(0x30); 
+	```
+
+            👷‍♂️                 UNDER CONSTRUCTION                  👷‍♂️
