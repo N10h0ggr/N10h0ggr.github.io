@@ -434,7 +434,7 @@ The `pDte = *(PLDR_DATA_TABLE_ENTRY*)(pDte);` line of code may look complex but 
 
 Here is an image to depict the and understand better how this works:
 
-!image
+![Double linked list](/assets/img/posts/peb_walk.png)  _Double-linked list structure_
 
 The following code go as follows: depending on whether the macro `STRUCTS` is defined. If the Microsoft's version of the `LDR_DATA_TABLE_ENTRY` structure is being used or the one from Windows Vista Kernel Structures the code returns either the value of `Flink` member of `InInitializationOrderLinks` or the first element of the `Reserved2` array, both casted to `HMODULE`.
 
