@@ -297,7 +297,7 @@ The most important member of the PEB structure is the `Ldr` variable of type `PE
 | Access Method             | Accessed through FS segment register           | Accessed through GS segment register                  |
 | Contains                  | Thread-specific information                    | More detailed thread-specific information             |
 
-Mainly there are two different approaches to retrieve the PEB pointer: one is using the `__readgsqword` macro from Vistual Studio (VS) and the other is implement it in assembly. As depending on the architecture the TEB pointer may be in the FS register or the GS register, is better to rely in the VS macro. 
+Mainly there are two different approaches to retrieve the PEB pointer: one is using the `__readgsqword` macro from Vistual Studio (VS) and the other is implement it in assembly.
 
 > **Note**
 > All information sources I found said that to access to the PTEB structure you had to retrieve a quadword from the offset `0x30` in the GS or doubleword from `0x18` offset in the FS for 32-bit. 
@@ -325,6 +325,124 @@ PPEB pPeb = (PPEB)__readgsqword(0x60);
 
 # For 32 bit
 PPEB pPeb = (PPEB)__readgsqword(0x30); 
-	```
+```
 
-            👷‍♂️                 UNDER CONSTRUCTION                  👷‍♂️
+After obtaining the PEB structure, the subsequent task involves accessing its `PEB_LDR_DATA Ldr` member, which holds information about the loaded DLLs within the process. Within this structure, the crucial member to focus on is `LIST_ENTRY InMemoryOrderModuleList`.
+```c
+typedef struct _PEB_LDR_DATA {
+  BYTE       Reserved1[8];
+  PVOID      Reserved2[3];
+  LIST_ENTRY InMemoryOrderModuleList;
+} PEB_LDR_DATA, *PPEB_LDR_DATA;
+```
+
+
+The `LIST_ENTRY` structure functions as a doubly-linked list, with one member pointing forwards (`Flink`) and the other pointing backwards (`Blink`).
+
+According to [Microsoft's definition](https://learn.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-peb_ldr_data) for the `InMemoryOrderModuleList` member, each item in the list is a pointer to an `LDR_DATA_TABLE_ENTRY` structure, which represents a DLL inside the linked list of loaded DLLs for the process, with each `LDR_DATA_TABLE_ENTRY` representing a unique DLL.
+
+As Microsoft shows most of the members as reserved, we put the one from the [Windows Vista Kernel Structures](https://www.nirsoft.net/kernel_struct/vista/index.html) research. More on this later.  
+
+```c
+typedef struct _LIST_ENTRY {
+   struct _LIST_ENTRY *Flink;
+   struct _LIST_ENTRY *Blink;
+} LIST_ENTRY, *PLIST_ENTRY, *RESTRICTED_POINTER PRLIST_ENTRY;
+
+typedef struct _LDR_DATA_TABLE_ENTRY {
+    LIST_ENTRY InLoadOrderLinks;
+    LIST_ENTRY InMemoryOrderLinks;
+    LIST_ENTRY InInitializationOrderLinks;
+    PVOID DllBase;
+    PVOID EntryPoint;
+    ULONG SizeOfImage;
+    UNICODE_STRING FullDllName;
+    UNICODE_STRING BaseDllName;
+    ULONG Flags;
+    WORD LoadCount;
+    WORD TlsIndex;
+    union {
+        LIST_ENTRY HashLinks;
+        struct {
+            PVOID SectionPointer;
+            ULONG CheckSum;
+        };
+    };
+    union {
+        ULONG TimeDateStamp;
+        PVOID LoadedImports;
+    };
+    PACTIVATION_CONTEXT EntryPointActivationContext;
+    PVOID PatchInformation;
+    LIST_ENTRY ForwarderLinks;
+    LIST_ENTRY ServiceTagLinks;
+    LIST_ENTRY StaticLinks;
+} LDR_DATA_TABLE_ENTRY, * PLDR_DATA_TABLE_ENTRY;
+```
+
+### Hands-on coding 
+
+Based on everything mentioned so far, the required actions are:
+
+1. Retrieve the PEB
+2. Retrieve the Ldr member from the PEB
+3. Retrieve the first element in the linked list
+4. Normalize the DLL name to match with the provided one
+5. Check the Microsoft's version of the `LDR_DATA_TABLE_ENTRY` to know what to return
+
+```c
+HMODULE GetModuleHandleReplacement(IN LPCWSTR szModuleName) {
+
+// Getting PEB
+#ifdef _WIN64 // if compiling as x64
+	PPEB					pPeb		= (PEB*)(__readgsqword(0x60));
+#elif _WIN32 // if compiling as x32
+	PPEB					pPeb		= (PEB*)(__readfsdword(0x30));
+#endif
+
+	// Getting Ldr
+	PPEB_LDR_DATA			pLdr		= (PPEB_LDR_DATA)(pPeb->Ldr);
+	// Getting the first element in the linked list (contains information about the first module)
+	PLDR_DATA_TABLE_ENTRY	pDte		= (PLDR_DATA_TABLE_ENTRY)(pLdr->InMemoryOrderModuleList.Flink);
+	
+	while (pDte) {
+		
+		if (pDte->FullDllName.Length != NULL) {
+
+			if (IsStringEqual(pDte->FullDllName.Buffer, szModuleName)) {
+				wprintf(L"[+] Found Dll \"%s\" \n", pDte->FullDllName.Buffer);
+#ifdef STRUCTS
+				return (HMODULE)(pDte->InInitializationOrderLinks.Flink);
+#else
+				return (HMODULE)pDte->Reserved2[0];
+#endif // STRUCTS
+
+			}
+		}
+		else {
+			break;
+		}
+		
+		// Next element in the linked list
+		pDte = *(PLDR_DATA_TABLE_ENTRY*)(pDte);
+	}
+	return NULL;
+}
+```
+
+The `pDte = *(PLDR_DATA_TABLE_ENTRY*)(pDte);` line of code may look complex but all it is doing is dereferencing the value stored at the address pointed to by `pDte` and then casting the result to a pointer to the `PLDR_DATA_TABLE_ENTRY` structure. 
+
+Here is an image to depict the and understand better how this works:
+
+!image
+
+The following code go as follows: depending on whether the macro `STRUCTS` is defined. If the Microsoft's version of the `LDR_DATA_TABLE_ENTRY` structure is being used or the one from Windows Vista Kernel Structures the code returns either the value of `Flink` member of `InInitializationOrderLinks` or the first element of the `Reserved2` array, both casted to `HMODULE`.
+
+```c
+#ifdef STRUCTS
+				return (HMODULE)(pDte->InInitializationOrderLinks.Flink);
+#else
+				return (HMODULE)pDte->Reserved2[0];
+#endif // STRUCTS
+```
+
