@@ -308,6 +308,7 @@ Mainly there are two different approaches to retrieve the PEB pointer: one is us
 Therefore are two possibilities:
 
 1. Access the PTEB and the access to the PPEB:
+
 ```c
 # For 64 bit
 PTEB pTeb = (PTEB)__readgsqword(0x30);
@@ -319,6 +320,7 @@ PPEB pPeb = (PPEB)pTeb->ProcessEnvironmentBlock;
 ```
 
 2. Access directly to the PPEB:
+
 ```c 
 # For 64 bit
 PPEB pPeb = (PPEB)__readgsqword(0x60); 
