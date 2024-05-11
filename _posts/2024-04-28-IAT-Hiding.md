@@ -413,12 +413,11 @@ HMODULE GetModuleHandleReplacement(IN LPCWSTR szModuleName) {
 
 			if (IsStringEqual(pDte->FullDllName.Buffer, szModuleName)) {
 				wprintf(L"[+] Found Dll \"%s\" \n", pDte->FullDllName.Buffer);
-#ifdef STRUCTS
+			#ifdef STRUCTS
 				return (HMODULE)(pDte->InInitializationOrderLinks.Flink);
-#else
+			#else
 				return (HMODULE)pDte->Reserved2[0];
-#endif // STRUCTS
-
+			#endif
 			}
 		}
 		else {
@@ -442,9 +441,9 @@ The following code go as follows: depending on whether the macro `STRUCTS` is de
 
 ```c
 #ifdef STRUCTS
-				return (HMODULE)(pDte->InInitializationOrderLinks.Flink);
+	return (HMODULE)(pDte->InInitializationOrderLinks.Flink);
 #else
-				return (HMODULE)pDte->Reserved2[0];
+	return (HMODULE)pDte->Reserved2[0];
 #endif // STRUCTS
 ```
 
