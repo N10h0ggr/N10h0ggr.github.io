@@ -49,6 +49,7 @@ _Unconstrained Delegation Flow_
 _Source: [crowe.com](https://www.crowe.com/cybersecurity-watch/unconstrained-delegation-too-trusting-for-its-own-good)_
 
 > **Note**
+> 
 > There are two missing steps in the diagram! The HTTP ST request and the actual ST presentation for accessing the HTTP service. Those steps would be between step 1 and 2, and inside step 3. Those steps are important because when the User asks for a ST for a service that is ok-as-delegate, the TGS service waits for the forwardable TGT request. 
 
 1. The client requests a TGT ticket as seen in the [Understanding Kerberos](https://n10h0ggr.github.io/posts/You-do-(not)-Understand-Kerberos/) post.
@@ -86,6 +87,7 @@ With those extensions, Constrained Delegation can be configured in two ways, onl
 2. **Protocol transition**: Regardless of how the client connects, the service will be able to delegate credentials. It needs both, S4U2Self and S4U2Proxy extensions combined.
 
 > **Important**
+> 
 > It is essential to understand that in unconstrained delegation, it's the client that delegates the TGT to the service, but in unconstrained delegation with S4U2Proxy, the client delegates its ST to the service. 
 
 #### Kerberos Only
@@ -108,6 +110,7 @@ _Kerberos-Only Constrained Delegation Packets_
 _Source: [Attl4s](https://attl4s.github.io/assets/pdf/You_do_(not)_Understand_Kerberos_Delegation.pdf)_
 
 > **Note for trubleshooting**
+> 
 > When using this type of delegation in IIS the Kerberos Delegation with DFS Share the delegation settings have to be specified twice, one for the Share account and another for the IIS machine account. 
 
 Kerberos-only constrained delegation just requires the user's ST (that must be "forwardable") to allow a service to request  service tickets for that user. As a difference, here is the service who requests the ticket and not the user.
