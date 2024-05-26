@@ -49,11 +49,11 @@ The code has the following structure:
 Tester
 ├─── src
 │   ├─── networking
-│	│	├ mod.rs
-│	│	└ http.rs
+│   │   ├ mod.rs
+│   │   └ http.rs
 │   └─── injections
-│		├ mod.rs
-│		└ early_bird_apc.rs
+│       ├ mod.rs
+│       └ early_bird_apc.rs
 └─── main.rs		 
 ```
 
