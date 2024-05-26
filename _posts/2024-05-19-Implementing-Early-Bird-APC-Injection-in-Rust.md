@@ -45,7 +45,7 @@ This steps are well identified in the code, but before going into that we will t
 
 The code has the following structure:
 
-``` txt
+``` bash
 Tester
 ├─── src
 │   ├─── networking
@@ -278,15 +278,15 @@ async fn main() {
 
 Here we can see the execution parents of the spawned process. The blue color indicates that the process is in debug state:
 
-![[process_explorer_1.png]]
+![process_explorer_1.png](/assets/img/posts/malware/APC/process_explorer_1.png)
 _System Informer: Process Tree_
 
 In the following image we can see the memory section of the process after the shellcode is written:
-![[process_explorer_2.png]]
+![process_explorer_2.png](/assets/img/posts/malware/APC/process_explorer_2.png)
 _System Informer: Process Memory_
 
 And lastly here is the full injection process with the shellcode already executed:
-![[cargo_run_3 1.png]]
+![cargo_run_3 1.png](/assets/img/posts/malware/APC/cargo_run_3.png)
 _Full injection Process_
 ## References
 
