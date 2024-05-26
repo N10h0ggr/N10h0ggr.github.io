@@ -1,6 +1,6 @@
 ---
 title: Implementing Early Bird APC Injection in Rust
-date: 2024-05-12
+date: 2024-05-19
 categories:
   - malware
   - execution
