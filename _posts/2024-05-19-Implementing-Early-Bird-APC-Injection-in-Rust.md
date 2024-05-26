@@ -69,6 +69,8 @@ Then the file has been served using a python http server.
 
 ## Dissecting the code
 
+In this section we dive into the code explaining part by part but without going into too much detail. The code has been refactored into libraries and uploaded to my github. Chek it out here: [link](https://github.com/N10h0ggr/RustMalDev).
+
 ### HTTP Client
 The first step involves writing Rust code to connect to a specified HTTPS URL and download the shellcode using the `reqwest` create. This code pertains to the `netwokring/http.rs`:
 
