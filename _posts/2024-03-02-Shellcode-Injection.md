@@ -42,7 +42,7 @@ Before delving into the code snippet, let's understand the purpose of each funct
 5. **Cleanup**: Close handles and release allocated memory after the execution of the remote thread.
 
 
-```C
+``` c
 #include <windows.h>
 #include <stdio.h>
 

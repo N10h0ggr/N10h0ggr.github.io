@@ -2,8 +2,8 @@
 title: Understanding Active Directory Security Descriptors
 date: 2024-06-02
 categories:
+  - red-team
   - AD
-  - basics
 tags:
   - english
 toc: "true"

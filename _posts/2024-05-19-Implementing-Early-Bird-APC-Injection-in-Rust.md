@@ -8,8 +8,7 @@ tags:
   - english
 toc: "true"
 ---
-
-In this post, I'll walk you through one of the challenges from Maldev Academy: creating a program in Rust that connects to an HTTP/HTTPS web page, downloads a shellcode, and performs Early Bird APC injection to execute it. 
+In this post, I'll walk you through one of the challenges from [Maldev Academy](https://maldevacademy.com/): creating a program in Rust that connects to an HTTP/HTTPS web page, downloads a shellcode, and performs Early Bird APC injection to execute it. 
 
 Since lately I have been learning to code in Rust I have decided to make it a little bit more difficult by solving the challenge only using Rust with the official Windows create.  
 

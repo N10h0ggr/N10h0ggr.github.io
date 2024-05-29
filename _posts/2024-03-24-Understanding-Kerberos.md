@@ -3,7 +3,7 @@ title: Understanding Kerberos
 date: 2024-03-24
 categories:
   - red-team
-  - windows
+  - AD
 tags:
   - english
   - Kerberos
