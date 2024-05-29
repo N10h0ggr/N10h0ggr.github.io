@@ -248,7 +248,6 @@ pub fn run(target: &str, shellcode: &[u8]) {
 ```
 
 ### Main
-
 Now to solve the challenge we just need to connect both parts. In this case we used `notepad.exe` as the process to spawn and the `calc.exe` as the process to be injected. 
 
 ``` rust
@@ -277,7 +276,6 @@ async fn main() {
 ```
 
 ## Result 
-
 Here we can see the execution parents of the spawned process. The blue color indicates that the process is in debug state:
 
 ![process_explorer_1.png](/assets/img/posts/malware/APC/process_explorer_1.png)
@@ -293,6 +291,4 @@ _Full injection Process_
 ## References
 
 - [Asynchronous Procedure Calls (APC) - Microsoft Documentation](https://learn.microsoft.com/en-us/windows/win32/sync/asynchronous-procedure-calls)
-- [Early Bird: Hunting in the Early Bird Catches the Worm](https://research.checkpoint.com/early-bird-hunting-in-the-early-bird-catches-the-worm/)
 - [Early Bird APC Injection Technique](https://www.ired.team/offensive-security/code-injection-process-injection/early-bird-apc-queue-code-injection)
-- [In-Memory Code Execution: Early Bird](https://posts.specterops.io/in-memory-code-execution-part-three-early-bird-63651d4f62fa)
