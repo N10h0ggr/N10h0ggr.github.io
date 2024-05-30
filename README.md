@@ -1,62 +1,26 @@
-# Chirpy Starter
+# About N10h0ggr's Cybersecurity Blog
 
-[![Gem Version](https://img.shields.io/gem/v/jekyll-theme-chirpy)][gem]&nbsp;
-[![GitHub license](https://img.shields.io/github/license/cotes2020/chirpy-starter.svg?color=blue)][mit]
+Welcome to **N10h0ggr's Cybersecurity Blog**, your go-to resource for insightful articles, tutorials, and discussions on all things cybersecurity. Whether you are a seasoned professional or a curious beginner, this blog aims to provide valuable content that enhances your knowledge and skills in the ever-evolving field of cybersecurity.
 
-When installing the [**Chirpy**][chirpy] theme through [RubyGems.org][gem], Jekyll can only read files in the folders
-`_data`, `_layouts`, `_includes`, `_sass` and `assets`, as well as a small part of options of the `_config.yml` file
-from the theme's gem. If you have ever installed this theme gem, you can use the command
-`bundle info --path jekyll-theme-chirpy` to locate these files.
+## Purpose
 
-The Jekyll team claims that this is to leave the ball in the user’s court, but this also results in users not being
-able to enjoy the out-of-the-box experience when using feature-rich themes.
+The primary goal of this blog is to share knowledge and foster a community of like-minded individuals passionate about cybersecurity. Here, you will find content ranging from technical deep dives into malware development to practical guides on offensive security techniques.
 
-To fully use all the features of **Chirpy**, you need to copy the other critical files from the theme's gem to your
-Jekyll site. The following is a list of targets:
+## Content Highlights
 
-```shell
-.
-├── _config.yml
-├── _plugins
-├── _tabs
-└── index.html
-```
+- **Malware Development**: Explore the latest techniques in malware creation and analysis, with a focus on practical implementation and understanding.
+- **Offensive Security**: Learn about various offensive security strategies, including penetration testing, exploit development, and red teaming.
+- **Programming Insights**: Gain insights into programming languages and tools commonly used in cybersecurity, with a special emphasis on Rust.
+- **Tutorials and Guides**: Step-by-step tutorials and guides to help you get hands-on experience with cybersecurity tools and techniques.
 
-To save you time, and also in case you lose some files while copying, we extract those files/configurations of the
-latest version of the **Chirpy** theme and the [CD][CD] workflow to here, so that you can start writing in minutes.
+## Getting Started
 
-## Prerequisites
+To get the most out of this blog, start by exploring the different categories and tags that interest you. Each post is designed to be informative and engaging, with practical examples and code snippets to help you apply what you learn.
 
-Follow the instructions in the [Jekyll Docs](https://jekyllrb.com/docs/installation/) to complete the installation of
-the basic environment. [Git](https://git-scm.com/) also needs to be installed.
+## Disclaimer
 
-## Installation
+The content provided on this blog is for educational purposes only. While the information shared is aimed at improving cybersecurity knowledge and skills, it should not be used for illegal activities. The author is not responsible for any misuse of the content provided.
 
-Sign in to GitHub and [**use this template**][use-template] to generate a brand new repository and name it
-`USERNAME.github.io`, where `USERNAME` represents your GitHub username.
+## Contact
 
-Then clone it to your local machine and run:
-
-```console
-$ bundle
-```
-
-## Run
-
-```powershell
-bundle exec jekyll s
-```
-
-## Usage
-
-Please see the [theme's docs](https://github.com/cotes2020/jekyll-theme-chirpy#documentation).
-
-## License
-
-This work is published under [MIT][mit] License.
-
-[gem]: https://rubygems.org/gems/jekyll-theme-chirpy
-[chirpy]: https://github.com/cotes2020/jekyll-theme-chirpy/
-[use-template]: https://github.com/cotes2020/chirpy-starter/generate
-[CD]: https://en.wikipedia.org/wiki/Continuous_deployment
-[mit]: https://github.com/cotes2020/chirpy-starter/blob/master/LICENSE
+For any questions, suggestions, or collaboration inquiries, you can reach out through the blog's contact page or connect with me on GitHub.
