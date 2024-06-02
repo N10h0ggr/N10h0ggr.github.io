@@ -221,7 +221,9 @@ The main reference for this topic (as stated in Attl4s video) is this security r
 **Other good references**
 - [# DEF CON 25 - Andy Robbins, Will Schroeder - Designing Active Directory DACL Backdoors](https://www.youtube.com/watch?v=_nGpZ1ydzS8)
 - [thehackerrecipes - DACL](https://www.thehacker.recipes/ad/movement/dacl) <- Very good attack mindmap 
+
 ## Further Investigation
+
 There are other interesting attacks regarding GPOs and OUs. I couldn't dig in as much I would like, at least not enough to explain them extendedly. I left here some of the references @Attl4s mentioned in the video. Most of the reference were broken, but I found some searching a little bit on Internet. 
 
 **Exploiting Object-Specific Rights on GPOs**
