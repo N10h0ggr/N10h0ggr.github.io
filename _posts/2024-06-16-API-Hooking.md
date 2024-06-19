@@ -19,6 +19,7 @@ From an attacker's perspective, API hooking can be used for the following purpos
 1. **Gather sensitive information or data** (e.g., credentials).
 2. **Modify or intercept function calls for malicious purposes**.
 3. **Bypass security measures** by altering how the operating system or a program behaves (e.g., AMSI, ETW).
+
 ## Types of Function Hooking
 
 Function hooking is a powerful technique used to alter the behavior of software by intercepting function calls, messages, or events. Various methods can achieve this, each with its own advantages and use cases:
@@ -147,7 +148,7 @@ int main() {
 
 #### Trampoline API Hooking using Custom Shellcode with Rust
 
-``` Rust
+``` rust
 use std::{mem, ptr, slice};  
 use std::ffi::{c_void, CStr};  
 use std::mem::size_of;  
