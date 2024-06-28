@@ -1,6 +1,6 @@
 ---
 title: Direct Syscalls
-date: 2024-06-30
+date: 2024-06-28
 categories:
   - malware
 tags:
