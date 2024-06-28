@@ -219,7 +219,7 @@ This implementation uses the **Local Process Shellcode Execution** approach but 
 > 
 > Some functions use utility functions I have written in other projects. This functions are the `get_export_directory` and the `compute_crc32_hash` and they are publicly available in my [github](https://github.com/N10h0ggr/RustMalDev)  as all the code I publish in this blog. 
 
-### Tests.rs
+### tests.rs
 ``` rust
 #[cfg(test)]  
 mod integration_tests {  
@@ -296,7 +296,7 @@ mod integration_tests {
 }
 ```
 
-### Lib.rs
+### lib.rs
 ``` rust
 pub mod asm;  
 pub use asm::run_direct_syscall;  
@@ -669,8 +669,23 @@ mod private_tests {
     }  
 }
 ```
+
+
+## Results
+
+After memory allocation 
+![[Pasted image 20240628155155.png]]
+
+After changing memory protections
+![[Pasted image 20240628155229.png]]
+
+New thread created 
+![[Pasted image 20240628155430.png]]
+
+Thread executes the payload which starts calc.exe process. Then our thread finishes and therefore our program.  
+![[Pasted image 20240628160457.png]]
 ## References 
-[\[1\]](https://www.infosecinstitute.com/resources/hacking/hooking-system-service-dispatch-table-ssdt/) System Service Descriptor Table Hooking
-[\[2\]](https://synzack.github.io/Blinding-EDR-On-Windows/#windows-drivers) Drivers and Kernel Callbacks in the security context
-[\[3\]](https://learn.microsoft.com/en-us/windows-hardware/drivers/kernel/callback-objects) Windows Callback objects
+- [\[1\]](https://www.infosecinstitute.com/resources/hacking/hooking-system-service-dispatch-table-ssdt/) System Service Descriptor Table Hooking
+- [\[2\]](https://synzack.github.io/Blinding-EDR-On-Windows/#windows-drivers) Drivers and Kernel Callbacks in the security context
+- [\[3\]](https://learn.microsoft.com/en-us/windows-hardware/drivers/kernel/callback-objects) Windows Callback objects
 
