@@ -673,17 +673,23 @@ mod private_tests {
 
 ## Results
 
-After memory allocation 
-![[Pasted image 20240628155155.png]]
+The first step is to allocate memory to copy our payload to. We achieve this calling the `NtAllocateVirtualMemory` function. Once called, the memory address is printed through the console: 
 
-After changing memory protections
-![[Pasted image 20240628155229.png]]
+![memory_allocation](../assets/img/posts/malware/syscalls/direct_syscall_memory_alliocation.png)
 
-New thread created 
-![[Pasted image 20240628155430.png]]
+Then we change the memory permissions calling `NtProtectVirtualMemory`, a function that enables us to add the Execution flag to that memory section.
 
-Thread executes the payload which starts calc.exe process. Then our thread finishes and therefore our program.  
-![[Pasted image 20240628160457.png]]
+![memory_protection](../assets/img/posts/malware/syscalls/direct_syscalls_memory_protection.png)
+
+Now is all prepared to spawn a new local thread with that memory address containing the payload as its starting point.
+
+![new_thread](../assets/img/posts/malware/syscalls/direct_syscalls_new_thread.png)
+
+Then we just activate the thread, who executes the payload starting the calc.exe process. Once executed, the thread terminates and our program finishes. Note that calc.exe is a new process and therefore it will remain alive with svchost.exe as its parent process.
+
+![calc_exec](../assets/img/posts/malware/syscalls/direct_syscalls_calc_execution.png) 
+
+
 ## References 
 - [\[1\]](https://www.infosecinstitute.com/resources/hacking/hooking-system-service-dispatch-table-ssdt/) System Service Descriptor Table Hooking
 - [\[2\]](https://synzack.github.io/Blinding-EDR-On-Windows/#windows-drivers) Drivers and Kernel Callbacks in the security context
