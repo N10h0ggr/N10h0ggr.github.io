@@ -1,6 +1,6 @@
 ---
 title: Direct Syscalls
-date: 2024-06-28
+date: 2024-06-30
 categories:
   - malware
 tags:
@@ -95,7 +95,7 @@ Here’s how it works: Imagine a function labeled function C, which has been hoo
 
 The direction of the jump—whether forward (downward in the execution order) or backward (upward)—determines how many functions are traversed. If a negative jump is made (upward in execution), the attacker moves to functions called before the target, while a positive jump (downward in execution) involves functions called after the target.
 
-![[tartarus_gate.png]]
+![tartarus_gate](../assets/img/posts/malware/syscalls/tartarus_gate.png)
 _Tartarus' Gate aproach form Maldev Academy_
 
 > **Note**
