@@ -2,10 +2,10 @@
 title: APC Injection
 date: 2024-03-03
 categories:
-  - malware
-  - execution
+  - Malware Development
+  - Process Injection
 tags:
-  - english
+  - Maldev-Academy
 toc: "true"
 ---
 [Asynchronous Procedure Calls (APC)](https://learn.microsoft.com/en-us/windows/win32/sync/asynchronous-procedure-calls) are a fundamental mechanism in Windows operating systems, facilitating asynchronous execution of code within a process context. APCs are typically used for tasks like I/O completion, thread execution, and more. However, attackers exploit this mechanism to inject and execute malicious code within legitimate processes.

@@ -2,11 +2,10 @@
 title: Understanding Kerberos
 date: 2024-03-24
 categories:
-  - red-team
-  - AD
+  - Windows
+  - Theory
 tags:
-  - english
-  - Kerberos
+  - Attl4s
 toc: "true"
 ---
 

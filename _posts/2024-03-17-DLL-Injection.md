@@ -2,10 +2,10 @@
 title: DLL Injection
 date: 2024-03-17
 categories:
-  - malware
-  - execution
+  - Malware Development
+  - Process Injection
 tags:
-  - english
+  - Maldev-Academy
 toc: "true"
 ---
 This is the first episode of the  "Unraveling the Malware Mysteries" series. Check out the entire series at [Unraveling the Malware Mysteries](https://noelit911.github.io/Unraveling-the-Malware-Mysteries/)

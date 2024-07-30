@@ -1,11 +1,11 @@
 ---
-title: IAT Hiding & Obfuscation 
+title: IAT Hiding & Obfuscation
 date: 2024-04-25
 categories:
-  - malware
-  - hiding
+  - Malware Development
+  - Anti-analysis Techniques
 tags:
-  - english
+  - Maldev-Academy
 toc: "true"
 ---
 

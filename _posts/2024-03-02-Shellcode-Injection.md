@@ -2,10 +2,10 @@
 title: Shellcode Injection
 date: 2024-03-02
 categories:
-  - malware
-  - execution
+  - Malware Development
+  - Process Injection
 tags:
-  - english
+  - Maldev-Academy
 toc: "true"
 ---
 Shellcode is a snippet of machine code typically written in assembly language. It's designed to perform a specific task when executed, often granting the attacker control over the compromised system. 

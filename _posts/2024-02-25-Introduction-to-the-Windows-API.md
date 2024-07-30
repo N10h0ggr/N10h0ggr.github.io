@@ -2,9 +2,10 @@
 title: Introduction to the Windows API
 date: 2024-02-25
 categories:
-  - basics
+  - Windows
+  - Theory
 tags:
-  - english
+  - Maldev-Academy
 toc: "true"
 ---
 

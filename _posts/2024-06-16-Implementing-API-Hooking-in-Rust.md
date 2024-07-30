@@ -1,10 +1,12 @@
 ---
-title: API Hooking
+title: Implementing API Hooking in Rust
 date: 2024-06-16
 categories:
-  - malware
+  - Malware Development
+  - Hooking
 tags:
-  - english
+  - Maldev-Academy
+  - Rust
 toc: "true"
 ---
 In this post, we'll explore API hooking, a technique used to intercept and be able to modify function calls in software. We'll delve into the different types of function hooking, focusing on Inline Hooks and Trampolines, and provide practical examples in C and Rust to illustrate how these hooks can be implemented. 

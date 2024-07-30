@@ -2,10 +2,10 @@
 title: Kerberos Delegation
 date: 2024-05-12
 categories:
-  - red-team
-  - AD
+  - Windows
+  - Theory
 tags:
-  - english
+  - Attl4s
 toc: "true"
 ---
 The goal of this post is to understand how Kerberos Delegation, how resolves the two-hop-problem and what attacks paths arise with bad implementations.

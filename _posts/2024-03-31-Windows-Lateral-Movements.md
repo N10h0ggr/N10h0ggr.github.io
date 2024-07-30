@@ -2,10 +2,10 @@
 title: Windows Lateral Movements
 date: 2024-03-31
 categories:
-  - red-team
-  - windows
+  - Windows
+  - Theory
 tags:
-  - english
+  - Attl4s
 toc: "true"
 ---
 

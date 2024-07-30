@@ -1,10 +1,12 @@
 ---
-title: Direct Syscalls
+title: Implementing Direct Syscalls in Rust
 date: 2024-06-28
 categories:
-  - malware
+  - Malware Development
+  - Syscalls
 tags:
-  - english
+  - Maldev-Academy
+  - Rust
 toc: "true"
 ---
 In recent years, many EDR vendors have implemented user mode hooking. This allows EDR systems to analyze and potentially redirect code executed in the context of Windows APIs. If the code does not appear malicious, the system call is executed correctly; otherwise, execution is prevented. User mode hooking makes it harder to execute malware, so attackers use techniques like API unhooking, direct system calls, or indirect system calls to bypass EDRs.
@@ -674,16 +676,16 @@ mod private_tests {
 ## Results
 
 After memory allocation 
-![[Pasted image 20240628155155.png]]
+![after-memory-allocations.png](assets/img/posts/malware/syscalls/after-memory-allocations.png)
 
 After changing memory protections
-![[Pasted image 20240628155229.png]]
+![after-memory-protections.png](assets/img/posts/malware/syscalls/after-memory-protections.png)
 
 New thread created 
-![[Pasted image 20240628155430.png]]
+![new-thread.png](assets/img/posts/malware/syscalls/new-thread.png)
 
 Thread executes the payload which starts calc.exe process. Then our thread finishes and therefore our program.  
-![[Pasted image 20240628160457.png]]
+![calc-exe-spawn.png](assets/img/posts/malware/syscalls/calc-exe-spawn.png)
 ## References 
 - [\[1\]](https://www.infosecinstitute.com/resources/hacking/hooking-system-service-dispatch-table-ssdt/) System Service Descriptor Table Hooking
 - [\[2\]](https://synzack.github.io/Blinding-EDR-On-Windows/#windows-drivers) Drivers and Kernel Callbacks in the security context
