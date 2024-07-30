@@ -1,4 +1,5 @@
 ---
+
 title: Implementing Direct Syscalls in Rust
 date: 2024-06-28
 categories:
@@ -97,7 +98,7 @@ Here’s how it works: Imagine a function labeled function C, which has been hoo
 
 The direction of the jump—whether forward (downward in the execution order) or backward (upward)—determines how many functions are traversed. If a negative jump is made (upward in execution), the attacker moves to functions called before the target, while a positive jump (downward in execution) involves functions called after the target.
 
-![[tartarus_gate.png]]
+![tartarus_gate](../assets/img/posts/malware/syscalls/tartarus_gate.png)
 _Tartarus' Gate aproach form Maldev Academy_
 
 > **Note**
@@ -686,6 +687,23 @@ New thread created
 
 Thread executes the payload which starts calc.exe process. Then our thread finishes and therefore our program.  
 ![calc-exe-spawn.png](assets/img/posts/malware/syscalls/calc-exe-spawn.png)
+=======
+The first step is to allocate memory to copy our payload to. We achieve this calling the `NtAllocateVirtualMemory` function. Once called, the memory address is printed through the console: 
+
+![memory_allocation](../assets/img/posts/malware/syscalls/direct_syscall_memory_alliocation.png)
+
+Then we change the memory permissions calling `NtProtectVirtualMemory`, a function that enables us to add the Execution flag to that memory section.
+
+![memory_protection](../assets/img/posts/malware/syscalls/direct_syscalls_memory_protection.png)
+
+Now is all prepared to spawn a new local thread with that memory address containing the payload as its starting point.
+
+![new_thread](../assets/img/posts/malware/syscalls/direct_syscalls_new_thread.png)
+
+Then we just activate the thread, who executes the payload starting the calc.exe process. Once executed, the thread terminates and our program finishes. Note that calc.exe is a new process and therefore it will remain alive with svchost.exe as its parent process.
+
+![calc_exec](../assets/img/posts/malware/syscalls/direct_syscalls_calc_execution.png) 
+
 ## References 
 - [\[1\]](https://www.infosecinstitute.com/resources/hacking/hooking-system-service-dispatch-table-ssdt/) System Service Descriptor Table Hooking
 - [\[2\]](https://synzack.github.io/Blinding-EDR-On-Windows/#windows-drivers) Drivers and Kernel Callbacks in the security context
