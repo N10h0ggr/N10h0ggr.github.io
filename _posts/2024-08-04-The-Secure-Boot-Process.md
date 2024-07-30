@@ -138,7 +138,6 @@ The IPL's primary functions include loading the complete bootloader, locating an
 
 The Initial Program Loader (IPL) **typically occupies 15 consecutive sectors of 512 bytes each** and is situated immediately after the Volume Boot Record (VBR). It contains just enough code to parse the partition’s filesystem and proceed with loading the boot manager module. The VBR and IPL work in tandem because the VBR, limited to a single sector, lacks the necessary space to include comprehensive filesystem parsing functionality on its own.
 
-
 ### The *bootmgr* Module and Boot Configuration Data (BCD)
 The Initial Program Loader (IPL) reads and loads the operating system's boot manager, for Windows the *bootmgr* module, from the filesystem. Once the IPL hands over control to *bootmgr*, it takes charge of the boot process. Bootmgr reads the Boot Configuration Data (BCD), which includes critical system parameters that influence security policies, such as the Kernel-Mode Code Signing Policy.
 
@@ -162,6 +161,147 @@ The BCD store holds all the information bootmgr needs to load the OS. This inclu
 | *BcdOSLoaderBoolean_WinPEMode*                | Tells the kernel to load in preinstallation mode, disabling kernel-mode code integrity checks as a byproduct | Boolean | 0x26000022   |
 | *BcdLibraryBoolean_AllowPrereleaseSignatures* | Enables test signing<br>(TESTSIGNING)                                                                        | Boolean | 0x1600004    |
 
+The `BcdLibraryBoolean_DisableIntegrityCheck` variable disables integrity checks, allowing unsigned kernel-mode drivers to load. However, this option is ignored in Windows 7 and cannot be set if Secure Boot is enabled.
+
+The `BcdOSLoaderBoolean_WinPEMode` variable directs the system to start in Windows Preinstallation Environment Mode, a minimal OS used for preparing systems for Windows installation. This mode also bypasses kernel integrity checks, including the mandatory Kernel-Mode Code Signing Policy for 64-bit systems.
+
+The `BcdLibraryBoolean_AllowPrereleaseSignatures` variable permits loading of kernel-mode drivers signed with test certificates. These certificates can be generated with tools from the Windows Driver Kit. For example, the Necurs rootkit uses this method to install a malicious driver signed with a custom certificate.
+
+After retrieving boot options, bootmgr performs a self-integrity check. If this check fails, bootmgr halts the boot process and displays an error. However, if any of those more is set to TRUE, this self-check is skipped, making bootmgr susceptible to tampering.
+
+#### Windows Early Kernel Initialization
+Once BCD parameters are loaded and self-integrity is verified, bootmgr selects the appropriate boot application. For a fresh OS load from the hard drive, it uses `winload.exe`; for resuming from hibernation, it uses `winresume.exe`. 
+
+When `winload.exe` takes over, it enables paging in **protected mode** and loads the OS kernel image along with dependencies, including:
+
+- `bootvid.dll`: VGA support library for boot time
+- `ci.dll`: Code integrity library
+- `clfs.dll`: Common logging filesystem driver
+- `hal.dll`: Hardware abstraction layer library
+- `kdcom.dll`: Kernel debugger protocol communications library
+- `pshed.dll`: Platform-specific hardware error driver
+
+Additionally, `winload.exe` loads boot-start drivers, including storage device drivers, **Early Launch Anti-Malware (ELAM)** modules, and the system registry hive.
+
+> **Note**
+> 
+> In order to read all the components from the hard drive, winload.exe uses the interface provided by bootmgr. This interface relies on the BIOS INT 13h disk service. Therefore, if the INT 13h handler is hooked by a bootkit, the malware can spoof all data read by winload.exe.
+
+`winload.exe` verifies the integrity of executables according to the system’s code integrity policy. Once all modules are successfully loaded, control is transferred to the OS kernel image for further initialization, as detailed in subsequent chapters.
+
+
+## Boot Process Security
+In this section, we’ll explore two key security mechanisms in the Microsoft Windows kernel: the Early Launch Anti-Malware (ELAM) module, and the Kernel-Mode Code Signing Policy. Both mechanisms aim to block unauthorized code from running in the kernel address space, enhancing protection against rootkits. We’ll examine how these mechanisms work, their strengths and weaknesses, and evaluate their effectiveness in combating rootkits and bootkits.
+
+### The Early Launch Anti-Malware Module
+Introduced in Windows 8, the Early Launch Anti-Malware (ELAM) module allows third-party security software to register a kernel-mode driver that is guaranteed to execute early in the boot process, before any other third-party drivers. This early execution ensures that security software can inspect and prevent the loading of malicious drivers, very common behavior in rootkits. 
+
+#### API Callback Routines
+ELAM operates by registering callback routines that the kernel uses to evaluate data in the system registry hive and boot-start drivers. These callbacks are critical for detecting and preventing the loading of malicious modules. The key API routines involved are:
+
+- **CmRegisterCallbackEx** and **CmUnRegisterCallback**: Used to register and unregister callbacks for monitoring registry data.
+- **IoRegisterBootDriverCallback** and **IoUnRegisterBootDriverCallback**: Used to register and unregister callbacks for boot-start drivers.
+
+#### Classification of Boot-Start Drivers
+Boot-start drivers are categorized based on their behavior and impact on the system's security and stability. ELAM classifies these drivers to facilitate better decision-making regarding their loading during the boot process. The classifications include:
+
+1. **Good**: Drivers known to be legitimate and clean
+2. **Bad**: Known to be malicious
+3. **Unknown**: Drivers that ELAM can’t classify
+
+Unfortunately, the ELAM driver must base this decision on limited data
+about the driver image to classify, namely:
+
+- The name of the image
+- The registry location where the image is registered as a boot-start driver
+- The publisher and issuer of the image’s certificate
+- A hash of the image and the name of the hashing algorithm
+- A certificate thumbprint and the name of the thumbprint algorithm
+
+> **Note**
+> 
+> The ELAM driver doesn’t receive the image’s base address, nor can it access the binary image on the hard drive because the storage device driver stack isn’t yet initialized (as the system hasn’t finished bootup). It must decide which drivers to load based solely on the hash of the image and its certificate, without being able to observe the image itself. As a consequence, the protection for the drivers is not very effective at this stage.
+
+#### ELAM Policy
+Windows determines whether to load known bad or unknown drivers based on the ELAM policy specified in the registry key: `HKLM\System\CurrentControlSet\Control\EarlyLaunch\DriverLoadPolicy`. 
+
+
+| Policy name                         | Policy value | Description                                                                            |
+| ----------------------------------- | ------------ | -------------------------------------------------------------------------------------- |
+| PNP_INITIALIZE_DRIVERS_DEFAULT      | 0x00         | Load known good drivers only                                                           |
+| PNP_INITIALIZE_UNKNOWN_DRIVERS      | 0x01         | Load known good and unknown drivers only                                               |
+| PNP_INITIALIZE_BAD_CRITICAL_DRIVERS | 0x03         | Load known good, unknown, and known bad critical drivers (This is the default setting) |
+| PNP_INITIALIZE_BAD_DRIVERS          | 0x07         | Load all drivers                                                                       |
+
+
+By default, the ELAM policy `PNP_INITIALIZE_BAD_CRITICAL_DRIVERS` allows the loading of bad critical drivers. This means that if a critical driver is classified by ELAM as known bad, the system will still load it. The reasoning behind this policy is that critical system drivers are essential for the operating system's functionality; if any critical driver fails to initialize, the operating system will be unable to boot. Thus, this ELAM policy prioritizes availability and serviceability over security to ensure the system can start.
+
+However, this policy does not load known bad noncritical drivers, meaning drivers that are not essential for the operating system to boot successfully. 
+
+#### Bypassing ELAM
+ELAM provides security software with an advantage against rootkit threats, but it is not effective against bootkits—and it wasn't designed to be. ELAM can only monitor legitimately loaded drivers, while most bootkits load kernel-mode drivers using undocumented operating system features. This allows bootkits to bypass security enforcement and inject their code into the kernel address space despite ELAM's presence. Moreover, a bootkit's malicious code runs before the operating system kernel is initialized and before any kernel-mode driver, including ELAM, is loaded. This allows bootkits to evade ELAM protection entirely: 
+
+![boot-process-with-ELAM.png](/assets/img/posts/malware/bootkits-and-rootkits/boot-process-with-ELAM.png)
+Most bootkits load their kernel-mode code during the middle of kernel initialization, after all OS subsystems (such as the I/O subsystem, object manager, plug and play manager, etc.) have been initialized, but before ELAM is executed. Since ELAM cannot prevent the execution of malicious code that is loaded prior to its activation, it has no defenses against bootkit techniques.
+
+### Microsoft Kernel-Mode Code Signing Policy
+The Kernel-Mode Code Signing Policy was introduced in Windows Vista and aims to protect the Windows operating system by enforcing code-signing requirements for kernel-mode modules at time of loading. This policy makes it significantly more difficult for unauthorized code to execute within the kernel space.
+
+This feature is enforced differently on 32-bit and 64-bit operating systems as this table shows:
+
+| Driver type                     | Integrity check?<br>64-bit | Integrity check?<br>32-bit                         |
+| ------------------------------- | -------------------------- | -------------------------------------------------- |
+| Boot-start drivers              | Yes                        | Yes                                                |
+| Non-boot-start PnP drivers      | Yes                        | No                                                 |
+| Non-boot-start, non-PnP drivers | Yes                        | No (except drivers that<br>stream protected media) |
+
+Drivers must have an embedded Software Publisher Certificate (SPC) digital signature or a catalog file with an SPC signature. Boot-start drivers can only have embedded signatures due to the unavailability of the storage device driver stack during early boot.
+
+### The Legacy Code Integrity Weakness
+The logic enforcing the Kernel-Mode Code Signing Policy is divided between the Windows kernel image and the kernel-mode library `ci.dll`. The kernel uses this library to verify the integrity of all modules loaded into the kernel address space. The system lies in a single point of failure within this code. 
+
+This weakness have been spotted with the Uroburos malware family, which by setting `nt!g_CiEnabled` variable to FALSE, allowed unsigned drivers to be loaded. This weakness exposes the system to potential threats even with integrity checks ostensibly in place​. 
+
+## Secure Boot Technology
+Secure Boot, introduced in Windows 8, leverages the Unified Extensible Firmware Interface (UEFI) to ensure that only code with a valid digital signature can be executed during the boot process. This mechanism is designed to protect the integrity of the operating system kernel, system files, and boot-critical drivers.
+
+![boot-process-with-secure-boot.png](/assets/img/posts/malware/bootkits-and-rootkits/boot-process-with-secure-boot.png)
+When Secure Boot is enabled, the BIOS checks the integrity of all UEFI and OS boot files executed at startup to ensure they originate from a legitimate source and have a valid digital signature.  The `winload.exe` and the ELAM driver verify the signatures of all boot-critical drivers as part of Secure Boot's validation. While similar to the Microsoft Kernel-Mode Code Signing Policy, Secure Boot specifically applies to modules executed before the OS kernel is loaded and initialized. As a result, untrusted components without valid signatures are not loaded and trigger remediation.
+
+At system startup, Secure Boot ensures the preboot environment and bootloader components remain untampered. The bootloader then validates the integrity of the kernel and boot-start drivers. Once the kernel passes these integrity checks, Secure Boot proceeds to verify other drivers and modules. 
+
+Secure Boot operates on the principle of a root of trust, assuming the system is trustworthy early in its execution. However, if attackers manage to execute an attack before this point, they can potentially bypass these protections. 
+
+### Virtualization-Based Security in Windows 10
+Windows 10 introduced Virtual Secure Mode (VSM) and Device Guard, which use hardware-assisted memory isolation to enhance code integrity protections. These technologies leverage Second Level Address Translation (SLAT) to improve security and performance.
+#### Virtual Secure Mode 
+Virtual Secure Mode (VSM) first appeared in Windows 10, leveraging Microsoft’s Hyper-V to provide virtualization-based security. VSM operates by executing the operating system and critical system modules in isolated, hypervisor-protected containers. This isolation ensures that even if the kernel is compromised, critical components in other virtual environments remain secure, preventing attackers from pivoting between compromised virtual containers. VSM also isolates code integrity components from the Windows kernel within these hypervisor-protected containers.
+
+This isolation makes it impossible for attackers to use vulnerable legitimate kernel-mode drivers to disable code integrity, unless they find a vulnerability affecting the protection mechanism itself. By separating potentially vulnerable drivers and code integrity libraries into different virtual containers, VSM ensures that attackers cannot easily disable code integrity protection. 
+
+#### Device Guard
+Device Guard enforces specific requirements and limitations on the driver development process, causing some existing drivers to malfunction when it is active. All drivers must adhere to the following rules:
+
+- Allocate all nonpaged memory from the no-execute (NX) nonpaged pool. The driver's PE module cannot have sections that are both writable and executable.
+- Avoid direct modification of executable system memory.
+- Do not use dynamic or self-modifying code in kernel mode.
+- Do not load any data as executable.
+
+Since most modern rootkits and bootkits do not meet these requirements, they cannot run with Device Guard active, even if the driver has a valid signature or bypasses code integrity protection.
+
+### Full View
+
+Secure Boot verifies firmware components executed in the preboot environment, including the OS bootloader, to protect against bootkits. VSM isolates the critical  components responsible for enforcing code integrity (known as Hypervisor-Enforced Code Integrity (HVCI)) from the OS kernel address space. 
+
+![boot-process-with-vsm-and-device-guard.png](/assets/img/posts/malware/bootkits-and-rootkits/boot-process-with-vsm-and-device-guard.png)
+**Secure Boot Process**
+
+1. **BIOS**: The Basic Input/Output System initiates the boot process.
+2. **UEFI**: The Unified Extensible Firmware Interface checks the integrity of the system before handing over control to the operating system. It ensures that only firmware components with valid digital signatures are executed.
+3. **bootmgr/winload.exe**: The boot manager and Windows loader continue the boot process, verifying the integrity of OS kernel files.
+4. **Hypervisor-Enforced Code Integrity Protection**: Protects code integrity by using the hypervisor to ensure only trusted code is executed.
+5. **Virtual Secure Mode (VSM)**: VSM creates isolated, hypervisor-protected containers to execute critical system components. Prevents attackers from patching critical components from a compromised kernel.
+6. **ELAM (Early Launch Anti-Malware)**: Monitors and ensures that only trusted drivers are loaded early in the boot process.
 
 
 -----
