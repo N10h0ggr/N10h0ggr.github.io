@@ -304,6 +304,68 @@ Secure Boot verifies firmware components executed in the preboot environment, in
 6. **ELAM (Early Launch Anti-Malware)**: Monitors and ensures that only trusted drivers are loaded early in the boot process.
 
 
+## Bootkit Infection Techniques
+
+
+### MBR Infection Techniques
+MBR-based infection methods are among the most common strategies used by bootkits to compromise the Windows boot process. These techniques typically involve modifying either the MBR code, the MBR data (such as the partition table), or both.
+
+MBR code modification involves overwriting the system MBR code with malicious code and save the original one in some way. One common approach is to save it in a hidden location in the hard drive. 
+
+MBR data modification method involves altering the MBR partition table. This method is more challenging, because the contents of the partition table change from system to system. This also makes it more difficult for malware analysts to find a pattern that definitively indentifies the infection.   
+
+#### The TDL4 Bootkit Case
+To illustrate this infection method we are going to analyze the TDL4 bootkit. TDL4 targets the Windows 64-bit platform, leveraging advanced evasion and anti-forensic techniques from its predecessor, TDL3. To bypass the Kernel-Mode Code Signing Policy and infect 64-bit systems, TDL4 modifies the MBR code of the bootable hard drive, replacing it with a malicious sample that is executed before the Windows kernel image. This ensures that the malicious code runs at a very early stage, making it difficult for security software to detect and remove it.
+
+The infection process of TDL4 involves creating a hidden storage area at the end of the hard drive, where it writes the original MBR and its own modules. These modules include the MBR code, loaders for 16-bit, 32-bit, and 64-bit systems, the main bootkit drivers, and payloads for injecting into processes. 
+
+TDL4 infects a hard drive by sending I/O control code requests (IOCTL_SCSI_PASS_THROUGH_DIRECT) directly to the disk miniport driver. This low-level interaction bypasses standard filter kernel drivers and their defenses. TDL4 uses the `DeviceIoControl` API to send these requests, targeting the symbolic link `??\PhysicalDriveXX`, where XX is the number of the infected drive. 
+
+To open this handle with write access, administrative privileges are required, which TDL4 achieves by exploiting the MS10-092 vulnerability in the Windows Task Scheduler service, a technique first seen in Stuxnet. The Task Scheduler runs a malicious task with administrative privileges, enabling TDL4 to infect the system successfully.
+
+By writing data directly to the disk, TDL4 bypasses filesystem-level defenses, as the I/O Request Packet (IRP) reaches the disk-class driver directly. Once all components are installed, TDL4 forces a system reboot using the `NtRaiseHardError` native API, passing `OptionShutdownSystem` to trigger a Blue Screen of Death (BSoD). The BSoD causes an automatic system reboot, ensuring the rootkit modules load on the next boot without alerting the user.
+
+![tdl4-boot-process.png](/assets/img/posts/malware/bootkits-and-rootkits/tdl4-boot-process.png)
+
+During the reboot, the BIOS reads the infected MBR into memory, executing it to load the bootkit. The infected MBR locates the bootkit’s filesystem at the hard drive's end, loading and executing the ldr16 module. This module hooks the BIOS’s 13h interrupt handler, reloads the original MBR, and passes execution to it, allowing normal booting with a hooked interrupt handler. The original MBR is stored in the mbr module within the hidden filesystem.
+
+The BIOS interrupt 13h service provides a crucial interface for disk I/O operations in the preboot environment, as storage device drivers are not yet loaded. Standard boot components (bootmgr, winload.exe, winresume.exe) rely on the 13h service to read system components from the hard drive.
+
+After control transfers to the original MBR, the boot process continues, loading the VBR and bootmgr, but now the bootkit in memory controls all I/O operations. The most significant part of ldr16 is its routine that hooks the 13h disk services interrupt handler. By intercepting this handler, the bootkit can manipulate data read from the hard drive during boot, replacing kdcom.dll with ldr32 or ldr64 from the hidden filesystem. This replacement allows the bootkit to load its driver and disable kernel-mode debugging facilities.
+
+Hijacking the BIOS’s disk interrupt handler mirrors rootkit strategies, infiltrating deeper into the system's stack of service interfaces. This approach often leads to conflicts between defensive software and system stability issues.
+
+To replace kdcom.dll on Windows Vista and later, the malware disables kernel-mode code integrity checks temporarily. If these checks are not disabled, winload.exe will report an error and halt the boot process. The bootkit disables code integrity checks by instructing winload.exe to load the kernel in preinstallation mode, which lacks these checks. This is achieved by replacing the BcdLibraryBoolean_EmsEnabled element with BcdOSLoaderBoolean_WinPEMode in the Boot Configuration Data (BCD) when bootmgr reads the BCD from the hard drive.
+
+Next, the bootkit turns on preinstallation mode to load the malicious kdcom.dll, then disables it to remove traces. The kernel receives parameters from winload.exe to enable specific boot options, including preinstallation mode. The malware manipulates the /MININT string option in winload.exe, causing the kernel to receive an invalid /MININT option and continue as if preinstallation mode weren't enabled.
+
+The final step involves the bootkit loading a malicious kernel-mode driver, bypassing code integrity checks. The malicious MBR code in TDL4 is encrypted to avoid detection by static analysis. The code initializes registers with the size and offset of the encrypted code, using a loop to decrypt the code and hook the INT 13h handler, disabling OS code integrity verification and loading malicious drivers.
+
+#### MBR Partition Table Modification
+Another approach to MBR infection involves modifying the partition table. The Olmasco variant of TDL4 demonstrates this technique by creating a hidden partition at the end of the hard drive. This partition is marked as active, and the VBR of the newly created partition is initialized. This method allows the malware to infect the system without altering the MBR code, making it harder to detect. 
+This method also allows for greater flexibility in storing and executing additional payloads, as the hidden partition can contain various components of the bootkit.
+
+![mbr-partition-table-infection.png](/assets/img/posts/malware/bootkits-and-rootkits/mbr-partition-table-infection.png)
+
+## VBR/IPL Infection Techniques
+
+While MBR infections are common, some bootkits target the Volume Boot Record (VBR) or Initial Program Loader (IPL) instead. These techniques are designed to evade security software that only checks the MBR for unauthorized modifications. The VBR and IPL are responsible for loading the operating system from the partition, making them critical points for malware infection.
+
+### IPL Modifications: Rovnix
+
+The Rovnix bootkit exemplifies the IPL modification technique. Instead of overwriting the MBR, Rovnix modifies the IPL on the bootable hard drive's active partition. It compresses the original IPL code, prepends its malicious bootstrap code, and writes the modified code back. Upon system startup, the malicious code hooks the INT 13h handler to patch the bootloader components and gain control once they are loaded. This technique allows Rovnix to remain undetected by security software that focuses on the MBR.
+
+Rovnix's infection process involves several steps to ensure its persistence and stealth. After modifying the IPL, Rovnix patches the bootloader components to load its malicious code during the boot process. It also employs various techniques to evade detection, such as using polymorphic code to change its appearance and hooking system functions to hide its activities. By targeting the IPL, Rovnix can effectively control the boot process and ensure that its malicious payloads are executed each time the system starts.
+
+### VBR Infection: Gapz
+
+Gapz is a highly stealthy bootkit that infects the VBR by modifying only a few bytes, specifically the HiddenSectors field in the BIOS Parameter Block (BPB). This minor alteration allows the bootkit to load its malicious code instead of the legitimate IPL, effectively evading detection. The bootkit image is stored either before the first partition or after the last one on the hard drive. By targeting the VBR, Gapz can control the boot process and load its code early during system startup.
+
+The infection process of Gapz involves altering the BPB to point to the location of its malicious code. This allows Gapz to intercept the boot process and execute its payloads before the operating system is fully loaded. Gapz also employs various evasion techniques, such as encrypting its components and using rootkit functionalities to hide its presence. By infecting the VBR, Gapz can maintain a low profile and persist on the system even if parts of it are detected and removed.
+
+
+
+
 -----
 **Secure Boot Process**
 
