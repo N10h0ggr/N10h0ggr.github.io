@@ -1,5 +1,5 @@
 ---
-title: "The Legacy Boot Process: A Deep Dive into MBR, VBR, and IPL Bootkits"
+title: A Deep Dive into Bootkits and Rootkits in Legacy Boot Process"
 date: 2024-08-04
 categories:
   - Malware Analysis
