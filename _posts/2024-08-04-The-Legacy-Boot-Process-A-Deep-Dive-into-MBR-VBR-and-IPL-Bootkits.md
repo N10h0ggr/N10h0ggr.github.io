@@ -1,5 +1,5 @@
 ---
-title: A Deep Dive into Bootkits and Rootkits in Legacy Boot Process"
+title: A Deep Dive into Legacy Bootkits and Rootkits
 date: 2024-08-04
 categories:
   - Malware Analysis
