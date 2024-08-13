@@ -14,6 +14,6 @@ Outside of work, I’m probably still glued to a screen, either coding or diggin
 
 Thanks for checking out my blog. Feel free to reach out, share your thoughts, or just say hi. 
 
-My LinkedIn profile: https://www.linkedin.com/in/noel-carrasco
-My Twitter profile: https://twitter.com/NoelCarrasco16
-My Github projects: https://github.com/N10h0ggr
+- My LinkedIn profile: [https://www.linkedin.com/in/noel-carrasco](https://www.linkedin.com/in/noel-carrasco)
+- My Twitter profile: [https://twitter.com/NoelCarrasco16](https://twitter.com/NoelCarrasco16)
+- My Github projects: [https://github.com/N10h0ggr](https://github.com/N10h0ggr)
