@@ -675,19 +675,6 @@ mod private_tests {
 
 
 ## Results
-
-After memory allocation 
-![after-memory-allocations.png](assets/img/posts/malware/syscalls/after-memory-allocations.png)
-
-After changing memory protections
-![after-memory-protections.png](assets/img/posts/malware/syscalls/after-memory-protections.png)
-
-New thread created 
-![new-thread.png](assets/img/posts/malware/syscalls/new-thread.png)
-
-Thread executes the payload which starts calc.exe process. Then our thread finishes and therefore our program.  
-![calc-exe-spawn.png](assets/img/posts/malware/syscalls/calc-exe-spawn.png)
-=======
 The first step is to allocate memory to copy our payload to. We achieve this calling the `NtAllocateVirtualMemory` function. Once called, the memory address is printed through the console: 
 
 ![memory_allocation](../assets/img/posts/malware/syscalls/direct_syscall_memory_alliocation.png)
