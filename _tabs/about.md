@@ -12,4 +12,8 @@ This blog is my little slice of the internet where I share what I’m learning, 
 
 Outside of work, I’m probably still glued to a screen, either coding or digging into some new security research. But I’ve got to balance all that screen time, so I’m also pretty into sports. It keeps me sharp, both mentally and physically.
 
-Thanks for checking out my blog. Feel free to reach out, share your thoughts, or just say hi. Link to my social media are in bottom left this page.
+Thanks for checking out my blog. Feel free to reach out, share your thoughts, or just say hi. 
+
+My LinkedIn profile: https://www.linkedin.com/in/noel-carrasco
+My Twitter profile: https://twitter.com/NoelCarrasco16
+My Github projects: https://github.com/N10h0ggr
