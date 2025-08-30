@@ -3,9 +3,7 @@ title: Windows Lateral Movements
 date: 2024-03-31
 categories:
   - Windows
-  - Theory
 tags:
-  - Attl4s
 toc: "true"
 ---
 

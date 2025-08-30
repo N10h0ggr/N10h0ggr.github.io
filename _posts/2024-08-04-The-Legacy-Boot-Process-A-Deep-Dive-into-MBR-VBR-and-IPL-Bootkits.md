@@ -3,9 +3,8 @@ title: A Deep Dive into Legacy Bootkits and Rootkits
 date: 2024-08-04
 categories:
   - Malware Analysis
-  - Theory
+  - Bootkits and Rootkits
 tags:
-  - Bootkits-and-Rootkits
 toc: "true"
 ---
 This blog post are the notes of the essential concepts of the legacy BIOS bootup process and the different infections methods used by the malware at that time. This blog post mainly relies in the information extracted  from the chapters 5 to 7 of the book **"Rootkits and Bootkits: Reversing Modern Malware and Next Generation Threats" by Alex Matrosov, Eugene Rodionov, and Sergey Bratus**. All the figures and tables used in this blog post are original from the book. This book offers a deep dive into the legacy and actual boot process, the secure mesure imposed until 2019, the infection techniques used by bootkits and rootkits and how to analyize those kinds of threads. I consider the book a great and understandable resource about this topic, so you may want to check it out. 

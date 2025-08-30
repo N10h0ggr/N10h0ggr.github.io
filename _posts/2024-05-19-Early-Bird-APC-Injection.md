@@ -5,8 +5,6 @@ categories:
   - Malware Development
   - Process Injection
 tags:
-  - Maldev-Academy
-  - Rust
 toc: "true"
 ---
 In this post, I'll walk you through one of the challenges from [Maldev Academy](https://maldevacademy.com/): creating a program in Rust that connects to an HTTP/HTTPS web page, downloads a shellcode, and performs Early Bird APC injection to execute it. 

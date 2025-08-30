@@ -3,9 +3,7 @@ title: Understanding Kerberos
 date: 2024-03-24
 categories:
   - Windows
-  - Theory
 tags:
-  - Attl4s
 toc: "true"
 ---
 

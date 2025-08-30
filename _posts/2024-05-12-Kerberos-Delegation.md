@@ -3,9 +3,7 @@ title: Kerberos Delegation
 date: 2024-05-12
 categories:
   - Windows
-  - Theory
 tags:
-  - Attl4s
 toc: "true"
 ---
 The goal of this post is to understand how Kerberos Delegation, how resolves the two-hop-problem and what attacks paths arise with bad implementations.

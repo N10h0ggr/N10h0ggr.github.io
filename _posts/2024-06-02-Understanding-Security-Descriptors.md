@@ -3,9 +3,7 @@ title: Understanding Active Directory Security Descriptors
 date: 2024-06-02
 categories:
   - Windows
-  - Theory
 tags:
-  - Attl4s
 toc: "true"
 ---
 Security Descriptors provide a way to configure access relationships between objects. More often than we would like, administrators configure too many permissions, opening new attack paths. In other cases, the legitimate solutions to resolve a certain problem require an account to have high privileges (Exchenge, AD Connect, ...). This type of overpemisions may lead to privilege escalation and persistence opportunities. 

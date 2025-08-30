@@ -1,13 +1,10 @@
 ---
-
 title: Implementing Direct Syscalls in Rust
 date: 2024-06-28
 categories:
   - Malware Development
-  - Syscalls
+  - Evasion
 tags:
-  - Maldev-Academy
-  - Rust
 toc: "true"
 ---
 In recent years, many EDR vendors have implemented user mode hooking. This allows EDR systems to analyze and potentially redirect code executed in the context of Windows APIs. If the code does not appear malicious, the system call is executed correctly; otherwise, execution is prevented. User mode hooking makes it harder to execute malware, so attackers use techniques like API unhooking, direct system calls, or indirect system calls to bypass EDRs.

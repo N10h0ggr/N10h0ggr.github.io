@@ -5,7 +5,6 @@ categories:
   - Malware Development
   - Anti-analysis Techniques
 tags:
-  - Maldev-Academy
 toc: "true"
 ---
 Process argument spoofing involves concealing the command-line arguments of a newly spawned process. This tactic aims to enable command execution without disclosing the commands to logging services like **Procmon**. 
