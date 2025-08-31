@@ -6,6 +6,7 @@ categories:
 tags:
 toc: "true"
 ---
+
 The goal of this post is to understand how Kerberos Delegation, how resolves the two-hop-problem and what attacks paths arise with bad implementations.
 
 This post are the notes taken from the @attl4s presentation.
@@ -136,7 +137,7 @@ The process works as follows:
 In protocol transition, the service has independence: with just the principal, it can request an ST for any user for any service, as the service to which the ST is directed is in plaintext for the service.
 
 #### Abusing protocol transition
-An account configured with Protocol Transition can invoke S4U2Self to impersonate any user and obtain a Forwardable ST to be used with S4U2Proxy. Even if `msDS-AllowedToDelegateTo` is configured with specific services of a service account, you can modify the Forwardable ST to target others from the same service account. This is because the service name of a ST is in plaintext and can be substituted. Example: `cifs/sql01.capsule.corp → HTTP/sql01.capsule.corp`
+An account configured with Protocol Transition can invoke S4U2Self to impersonate any user and obtain a Forwardable ST to be used with S4U2Proxy. Even if `msDS-AllowedToDelegateTo` is configured with specific services of a service account, you can modify the Forwardable ST to target others from the same service account. This is because the service name of a ST is in plaintext and can be substituted. Example: `cifs/sql01.capsule.corp " HTTP/sql01.capsule.corp`
 
 When invoking S4U2Proxy with a "non-forwardable" ST, an error occurs, and it falls back to Resource-Based Constrained Delegation (RBCD). This casuistic was not explained in Microsoft documents and security researchers started investigating. We will aboard how Resource-Based Constrained Delegation works in next section.
 
@@ -182,6 +183,6 @@ Additionally, configuring UAC settings to mark accounts as sensitive and restric
 
 ## Interesting Links
 
-- Dirk-Jan Mollema - [“Relaying” Kerberos - Having fun with unconstrained delegation](https://dirkjanm.io/krbrelayx-unconstrained-delegation-abuse-toolkit/)
+- Dirk-Jan Mollema - ["Relaying” Kerberos - Having fun with unconstrained delegation](https://dirkjanm.io/krbrelayx-unconstrained-delegation-abuse-toolkit/)
 - Roberto Rodriguez – [Hunting in Active Directory: Unconstrained Delegation & Forests Trusts](https://posts.specterops.io/hunting-in-active-directory-unconstrained-delegation-forests-trusts-71f2b33688e1)
 - Crummie5 - [Kerberos Unconstrained Delegation: Compromising a Computer Object by its TGT](https://research.nccgroup.com/2019/08/20/kerberos-resource-based-constrained-delegation-when-an-image-change-leads-to-a-privilege-escalation)

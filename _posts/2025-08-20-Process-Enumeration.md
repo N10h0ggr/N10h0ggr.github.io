@@ -10,7 +10,7 @@ toc: "true"
 Explanation on how to implement process enumeration in Windows and Linux, showing examples with APIs, access to the PEB, and use of the /proc system
 ### What does this technique consist of?
 
-Process enumeration is one of the most commonly used techniques by malware to detect whether it is being analyzed in a controlled environment. Through this technique, malware can obtain a list of active processes in the system. With this list, it can compare the process names against a “blacklist” of security or analysis tools. If a match is found, it may choose to stop execution, change its behavior to something harmless, or even deploy a fake payload to confuse the analyst.
+Process enumeration is one of the most commonly used techniques by malware to detect whether it is being analyzed in a controlled environment. Through this technique, malware can obtain a list of active processes in the system. With this list, it can compare the process names against a "blacklist” of security or analysis tools. If a match is found, it may choose to stop execution, change its behavior to something harmless, or even deploy a fake payload to confuse the analyst.
 
 >**Note**  
 >Process enumeration is conditioned by the privileges of the process that executes it. A user without elevated permissions may not have access to sensitive information from other processes (e.g., arguments, memory, or loaded modules). On the other hand, with administrative/root privileges, visibility is practically total.
@@ -23,7 +23,7 @@ In Windows, the most common way to perform process enumeration is through the To
 
 #### Process enumeration with Toolhelp32
 
-The Toolhelp32 API is probably the most widely used method for enumerating processes in Windows. It allows creating a “snapshot” of all active processes and iterating through them one by one using the Process32First and Process32Next functions.
+The Toolhelp32 API is probably the most widely used method for enumerating processes in Windows. It allows creating a "snapshot” of all active processes and iterating through them one by one using the Process32First and Process32Next functions.
 
 This method is simple to implement and well documented, making it a common choice for both developers and malware authors.
 
@@ -206,9 +206,9 @@ Another alternative is using libraries such as **libproc2** (used internally by 
 
 The most common and direct method is to iterate over the `/proc` directory. Each subdirectory whose name is a number corresponds to a running PID, and inside we can find:
 
-- `/proc/<pid>/exe` → symbolic link to the executable
-- `/proc/<pid>/cmdline` → command line used
-- `/proc/<pid>/status` → general information (UID, state, memory)
+- `/proc/<pid>/exe` -> symbolic link to the executable
+- `/proc/<pid>/cmdline` -> command line used
+- `/proc/<pid>/status` -> general information (UID, state, memory)
 
 ```c
 #include <dirent.h>
