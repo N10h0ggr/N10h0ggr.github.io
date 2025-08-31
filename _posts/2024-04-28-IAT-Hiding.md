@@ -3,7 +3,7 @@ title: IAT Hiding & Obfuscation
 date: 2024-04-25
 categories:
   - Malware Development
-  - Anti-analysis Techniques
+  - Anti-Analysis Techniques
 tags:
 toc: "true"
 ---

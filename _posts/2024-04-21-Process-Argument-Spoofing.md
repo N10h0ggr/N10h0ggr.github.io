@@ -3,7 +3,7 @@ title: Process Argument Spoofing
 date: 2024-04-21
 categories:
   - Malware Development
-  - Anti-analysis Techniques
+  - Anti-Analysis Techniques
 tags:
 toc: "true"
 ---
