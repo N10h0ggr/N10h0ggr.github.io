@@ -3,7 +3,7 @@ title: Process Enumeration
 date: 2025-08-20
 categories:
   - Malware Development
-  - Anti-analysis Techniques
+  - Anti-Analysis Techniques
 tags:
 toc: "true"
 ---
